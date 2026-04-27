@@ -1,0 +1,211 @@
+<svg viewBox="0 0 800 500" xmlns="http://www.w3.org/2000/svg">
+  <!-- Fond de scène: salle informatique moderne -->
+  <rect width="800" height="500" fill="#f0f9ff" />
+  
+  <!-- Éléments décoratifs d'arrière-plan -->
+  <rect x="0" y="350" width="800" height="150" fill="#bfdbfe" />
+  <rect x="50" y="50" width="700" height="300" rx="10" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2" />
+  
+  <!-- Fenêtres -->
+  <rect x="600" y="80" width="120" height="150" rx="5" fill="#dbeafe" stroke="#93c5fd" stroke-width="2" />
+  <line x1="660" y1="80" x2="660" y2="230" stroke="#93c5fd" stroke-width="2" />
+  <line x1="600" y1="155" x2="720" y2="155" stroke="#93c5fd" stroke-width="2" />
+  
+  <!-- Grande table -->
+  <rect x="100" y="250" width="600" height="20" rx="5" fill="#94a3b8" />
+  <rect x="120" y="270" width="10" height="80" fill="#64748b" />
+  <rect x="670" y="270" width="10" height="80" fill="#64748b" />
+
+  <!-- Étudiant 1: femme avec ordinateur portable -->
+  <g transform="translate(150, 200)">
+    <!-- Ordinateur portable -->
+    <rect x="-40" y="30" width="80" height="50" rx="5" fill="#334155" />
+    <rect x="-40" y="30" width="80" height="40" rx="2" fill="#1e293b" />
+    <rect x="-35" y="35" width="70" height="30" rx="1" fill="#0ea5e9" />
+    <rect x="-40" y="80" width="80" height="5" rx="2" fill="#475569" />
+    
+    <!-- Corps -->
+    <rect x="-15" y="90" width="30" height="60" rx="10" fill="#3b82f6" />
+    
+    <!-- Tête -->
+    <circle cx="0" cy="60" r="25" fill="#713f12" />
+    <circle cx="0" cy="65" r="20" fill="#422006" />
+    <path d="M-12,55 Q0,40 12,55" stroke="#422006" stroke-width="8" fill="none" />
+    
+    <!-- Visage -->
+    <circle cx="-8" cy="60" r="3" fill="#000000" />
+    <circle cx="8" cy="60" r="3" fill="#000000" />
+    <path d="M-5,70 Q0,75 5,70" stroke="#000000" stroke-width="1.5" fill="none" />
+    
+    <!-- Bras -->
+    <rect x="-45" y="100" width="30" height="10" rx="5" fill="#3b82f6" transform="rotate(-30 -45 100)" />
+    <rect x="15" y="100" width="30" height="10" rx="5" fill="#3b82f6" transform="rotate(30 15 100)" />
+    
+    <!-- Mains -->
+    <circle cx="-45" cy="90" r="8" fill="#422006" />
+    <circle cx="45" cy="90" r="8" fill="#422006" />
+  </g>
+
+  <!-- Étudiant 2: homme avec tablette -->
+  <g transform="translate(300, 190)">
+    <!-- Tablette -->
+    <rect x="-25" y="40" width="50" height="35" rx="5" fill="#334155" />
+    <rect x="-22" y="43" width="44" height="29" rx="2" fill="#2563eb" />
+    <circle cx="0" cy="43" r="2" fill="#f8fafc" />
+    
+    <!-- Corps -->
+    <rect x="-20" y="80" width="40" height="70" rx="10" fill="#22c55e" />
+    
+    <!-- Tête -->
+    <circle cx="0" cy="55" r="25" fill="#713f12" />
+    
+    <!-- Cheveux courts -->
+    <path d="M-15,40 Q0,30 15,40 Q25,45 23,55 Q20,65 12,65 Q8,65 8,60 Q8,65 0,65 Q-8,65 -8,60 Q-8,65 -12,65 Q-20,65 -23,55 Q-25,45 -15,40" fill="#0f172a" />
+    
+    <!-- Visage -->
+    <circle cx="-8" cy="55" r="3" fill="#000000" />
+    <circle cx="8" cy="55" r="3" fill="#000000" />
+    <path d="M-5,65 Q0,70 5,65" stroke="#000000" stroke-width="1.5" fill="none" />
+    
+    <!-- Bras -->
+    <rect x="-50" y="95" width="30" height="12" rx="6" fill="#22c55e" transform="rotate(-30 -50 95)" />
+    <rect x="20" y="95" width="30" height="12" rx="6" fill="#22c55e" transform="rotate(30 20 95)" />
+    
+    <!-- Mains -->
+    <circle cx="-30" cy="80" r="8" fill="#713f12" />
+    <circle cx="30" cy="80" r="8" fill="#713f12" />
+  </g>
+
+  <!-- Étudiant 3: femme avec ordinateur de bureau -->
+  <g transform="translate(450, 210)">
+    <!-- Écran d'ordinateur -->
+    <rect x="-30" y="10" width="60" height="45" rx="5" fill="#64748b" />
+    <rect x="-27" y="13" width="54" height="39" rx="2" fill="#0f172a" />
+    <rect x="-25" y="15" width="50" height="35" rx="1" fill="#4ade80" />
+    <rect x="-10" y="55" width="20" height="10" rx="2" fill="#64748b" />
+    <rect x="-40" y="65" width="80" height="5" rx="2" fill="#94a3b8" />
+    
+    <!-- Clavier -->
+    <rect x="-40" y="80" width="80" height="10" rx="2" fill="#334155" />
+    <rect x="-38" y="82" width="76" height="6" rx="1" fill="#1e293b" />
+    
+    <!-- Corps -->
+    <rect x="-15" y="100" width="30" height="60" rx="10" fill="#ec4899" />
+    
+    <!-- Tête -->
+    <circle cx="0" cy="70" r="25" fill="#713f12" />
+    
+    <!-- Cheveux mi-longs -->
+    <path d="M-25,70 Q-20,40 0,40 Q20,40 25,70" fill="#422006" />
+    <path d="M-25,60 Q-15,70 -5,60" fill="#422006" />
+    <path d="M5,60 Q15,70 25,60" fill="#422006" />
+    
+    <!-- Visage -->
+    <circle cx="-8" cy="65" r="3" fill="#000000" />
+    <circle cx="8" cy="65" r="3" fill="#000000" />
+    <path d="M-5,75 Q0,80 5,75" stroke="#000000" stroke-width="1.5" fill="none" />
+    
+    <!-- Bras -->
+    <rect x="-45" y="110" width="30" height="10" rx="5" fill="#ec4899" transform="rotate(-30 -45 110)" />
+    <rect x="15" y="110" width="30" height="10" rx="5" fill="#ec4899" transform="rotate(30 15 110)" />
+    
+    <!-- Mains -->
+    <circle cx="-50" cy="100" r="8" fill="#713f12" />
+    <circle cx="50" cy="100" r="8" fill="#713f12" />
+  </g>
+
+  <!-- Étudiant 4: homme avec smartphone -->
+  <g transform="translate(600, 180)">
+    <!-- Smartphone -->
+    <rect x="-10" y="40" width="20" height="35" rx="3" fill="#27272a" />
+    <rect x="-8" y="43" width="16" height="29" rx="1" fill="#3b82f6" />
+    <circle cx="0" cy="38" r="1" fill="#f8fafc" />
+    
+    <!-- Corps -->
+    <rect x="-20" y="80" width="40" height="70" rx="10" fill="#8b5cf6" />
+    
+    <!-- Tête -->
+    <circle cx="0" cy="55" r="25" fill="#713f12" />
+    
+    <!-- Cheveux coupe afro -->
+    <circle cx="0" cy="45" r="25" fill="#000000" />
+    
+    <!-- Lunettes -->
+    <rect x="-15" y="55" width="12" height="8" rx="2" fill="none" stroke="#000000" stroke-width="1.5" />
+    <rect x="3" y="55" width="12" height="8" rx="2" fill="none" stroke="#000000" stroke-width="1.5" />
+    <line x1="-3" y1="59" x2="3" y2="59" stroke="#000000" stroke-width="1.5" />
+    
+    <!-- Visage -->
+    <circle cx="-9" cy="59" r="2" fill="#000000" />
+    <circle cx="9" cy="59" r="2" fill="#000000" />
+    <path d="M-5,65 Q0,70 5,65" stroke="#000000" stroke-width="1.5" fill="none" />
+    
+    <!-- Bras -->
+    <rect x="-40" y="95" width="30" height="12" rx="6" fill="#8b5cf6" transform="rotate(-20 -40 95)" />
+    <rect x="10" y="95" width="30" height="12" rx="6" fill="#8b5cf6" transform="rotate(20 10 95)" />
+    
+    <!-- Mains -->
+    <circle cx="-30" cy="105" r="8" fill="#713f12" />
+    <circle cx="30" cy="105" r="8" fill="#713f12" />
+  </g>
+
+  <!-- Étudiant 5: personne debout pointant vers l'écran -->
+  <g transform="translate(50, 200)">
+    <!-- Corps -->
+    <rect x="-15" y="60" width="30" height="80" rx="10" fill="#f97316" />
+    
+    <!-- Tête -->
+    <circle cx="0" cy="30" r="25" fill="#422006" />
+    
+    <!-- Cheveux courts texturés -->
+    <path d="M-15,15 Q0,5 15,15 Q20,20 20,25 Q15,35 10,35 Q5,35 5,30 Q5,35 0,35 Q-5,35 -5,30 Q-5,35 -10,35 Q-15,35 -20,25 Q-20,20 -15,15" fill="#0f172a" />
+    
+    <!-- Visage -->
+    <circle cx="-8" cy="30" r="3" fill="#000000" />
+    <circle cx="8" cy="30" r="3" fill="#000000" />
+    <path d="M-5,40 Q0,45 5,40" stroke="#000000" stroke-width="1.5" fill="none" />
+    
+    <!-- Bras pointant -->
+    <rect x="-15" y="70" width="50" height="12" rx="6" fill="#f97316" transform="rotate(20 -15 70)" />
+    <circle cx="35" cy="80" r="8" fill="#422006" />
+    
+    <!-- Autre bras -->
+    <rect x="-30" y="75" width="30" height="12" rx="6" fill="#f97316" transform="rotate(-20 -30 75)" />
+    <circle cx="-45" cy="85" r="8" fill="#422006" />
+    
+    <!-- Jambes -->
+    <rect x="-15" y="140" width="12" height="60" rx="6" fill="#0f172a" />
+    <rect x="3" y="140" width="12" height="60" rx="6" fill="#0f172a" />
+    
+    <!-- Chaussures -->
+    <rect x="-20" y="197" width="20" height="8" rx="4" fill="#334155" />
+    <rect x="0" y="197" width="20" height="8" rx="4" fill="#334155" />
+  </g>
+
+  <!-- Éléments décoratifs: Post-its, tasses à café, etc. -->
+  <rect x="130" y="240" width="20" height="20" rx="2" fill="#fef08a" transform="rotate(10 130 240)" />
+  <rect x="360" y="250" width="20" height="20" rx="2" fill="#fed7aa" transform="rotate(-5 360 250)" />
+  <circle cx="380" cy="80" r="8" fill="#475569" />
+  <path d="M377,80 Q380,83 383,80" stroke="#f8fafc" stroke-width="1" fill="none" />
+  <circle cx="420" cy="80" r="8" fill="#475569" />
+  <path d="M417,80 Q420,83 423,80" stroke="#f8fafc" stroke-width="1" fill="none" />
+  
+  <!-- Code flottant stylisé -->
+  <rect x="130" y="100" width="100" height="60" rx="5" fill="#0f172a" opacity="0.7" />
+  <text x="140" y="120" font-family="monospace" font-size="8" fill="#4ade80">function init() {</text>
+  <text x="140" y="135" font-family="monospace" font-size="8" fill="#3b82f6">  return data;</text>
+  <text x="140" y="150" font-family="monospace" font-size="8" fill="#4ade80">}</text>
+  
+  <!-- Écran projeté -->
+  <rect x="250" y="100" width="120" height="80" rx="5" fill="#0f172a" opacity="0.7" />
+  <circle cx="260" cy="110" r="3" fill="#ef4444" />
+  <circle cx="270" cy="110" r="3" fill="#fbbf24" />
+  <circle cx="280" cy="110" r="3" fill="#22c55e" />
+  <rect x="260" y="120" width="100" height="8" rx="2" fill="#94a3b8" opacity="0.7" />
+  <rect x="260" y="135" width="80" height="8" rx="2" fill="#94a3b8" opacity="0.7" />
+  <rect x="260" y="150" width="90" height="8" rx="2" fill="#94a3b8" opacity="0.7" />
+  <rect x="260" y="165" width="60" height="8" rx="2" fill="#94a3b8" opacity="0.7" />
+  
+  <!-- Titre illustration -->
+  <text x="400" y="40" font-family="Arial, sans-serif" font-size="20" font-weight="bold" text-anchor="middle" fill="#1e3a8a">Collaboration Technologique</text>
+</svg>

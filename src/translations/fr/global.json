@@ -1,0 +1,558 @@
+{
+  "header": {
+    "registerText": "S'inscrire"
+  },
+  "landingPage": {
+    "heroSection": {
+      "slogan": "Planifiez votre voyage, partagez-le, et faites rêver avec busstation.com",
+      "fullSlogan": "La plateforme qui connecte les agences de voyages et les voyageurs pour une expérience de réservation fluide et sécurisée.",
+      "loginText": "Se connecter",
+      "ctaMarketPlace": "Explorer nos offres de voyage",
+      "registerText": "S'inscrire gratuitement"
+    },
+    "customerSection": {
+      "title": "Pour les voyageurs",
+      "slogan": "Découvrez une nouvelle façon de réserver vos voyages, simple, sécurisée et flexible.",
+      "freeSearchText": "Trouvez rapidement des voyages qui correspondent à vos critères grâce à notre moteur de recherche.",
+      "freeSearchTitle": "Recherche facile",
+      "flexiblePaymentTitle": "Paiement Flexible",
+      "flexiblePaymentText": "Payez en partie ou en totalité selon votre budget, avec des options de paiement sécurisées via Orange Money et Mobile Money.",
+      "reservationManagementTitle": "Gestion des Réservations",
+      "reservationManagementText": "Réservez une ou plusieurs places, annulez ou modifiez vos réservations facilement depuis votre espace personnel."
+    },
+    "statisticSection": {
+      "title": "Analyses et statistiques",
+      "slogan": "Suivez les performances de vos voyages avec des statistiques détaillées et des analyses en temps réel.",
+      "followUpReservationTitle": "Suivi des réservations",
+      "followUpReservationText": "Consultez le nombre de réservations par voyage, par période et par destination. Identifiez vos voyages plus populaires.",
+      "cancellationAnalyticsTitle": "Analyse des annulations",
+      "cancellationAnalyticsText": "Suivez les taux d'annulation et comprenez les raisons pour améliorer vos offres et réduire les futures.",
+      "commerceCustomTitle": "Rapports personnalisés",
+      "commerceCustomText": "Générez des rapports personnalisés sur une période donnée pour analyser vos performances et prendre des décisions éclairées"
+    },
+    "featureSection": {
+      "title": "Fonctionnalités principales",
+      "financialManagementTitle": "Gestion Financière",
+      "financialManagementDescription": "Suivez vos revenus, gérez les paiements partiels et complets, et offrez des options de paiement flexibles à vos clients.",
+      "integratedChatTitle": "Chat Intégré",
+      "integratedChatDescription": "Communiquez directement avec vos clients via notre système de chat intégré pour répondre à leurs questions et finaliser les détails.",
+      "reviewSystemTitle": "Systeme d'Avis",
+      "reviewSystemDescription": "Recevez des avis de vos clients et construisez votre réputation. Les avis positifs vous aideront à attirer plus de voyageurs.",
+      "couponsAndPromotionsTitle": "Coupons et Promotions",
+      "couponsAndPromotionsDescription": "Créez des coupons de réduction et des offres promotionnelles pour stimuler les ventes pendant les périodes creuses.",
+      "advancedSecurityTitle": "Sécurité avancée",
+      "advancedSecurityDescription": "Protégez vos données et celles de vos clients avec notre système de sécurité avancé et nos paiements sécurisés.",
+      "intuitiveInterfaceTitle": "Interface Intuitive",
+      "intuitiveInterfaceDescription": "Profitez d'une interface utilisateur intuitive et facile à utiliser, conçue pour simplifier la gestion de vos voyages.",
+      "exploreAllFeatureText": "Découvrez toutes les fonctionnalités"
+    },
+    "agencySection": {
+      "title": "Pour les agences de voyage",
+      "slogan": "Bus Station offre aux agences de voyages une plateforme complète pour gérer leurs activités et développer leur clientèle.",
+      "exclusiveBenefits": "Avantages Exclusifs",
+      "features": {
+        "planning": {
+          "title": "Planification de voyages",
+          "description": "Créez et planifiez facilement vos voyages avec notre interface intuitive. Définissez les dates, les itinéraires, les prix et les disponibilités en quelques clics."
+        },
+        "publishing": {
+          "title": "Publication et gestion",
+          "description": "Publiez vos voyages pour les rendre visibles aux clients potentiels. Modifiez ou annulez les voyages à tout moment selon vos besoins."
+        },
+        "tickets": {
+          "title": "Gestion des tickets",
+          "description": "Créez et gérez des tickets pour vos voyages. Offrez des coupons de réduction pour attirer plus de clients et fidéliser votre clientèle."
+        }
+      },
+      "advantages": {
+        "visibility": {
+          "title": "Visibilité internationale",
+          "description": "Atteignez des clients du monde entier"
+        },
+        "customers": {
+          "title": "Gestion de clientèle",
+          "description": "Suivez les préférences de vos voyageurs"
+        },
+        "analytics": {
+          "title": "Analyses détaillées",
+          "description": "Statistiques et rapports personnalisés"
+        },
+        "security": {
+          "title": "Sécurité des transactions",
+          "description": "Paiements sécurisés et protection des données"
+        }
+      }
+    },
+    "CTASection": {
+      "title": "Prêt à simplifier vos voyages et vos réservations ?",
+      "slogan": "Rejoignez Bus Station dès aujourd'hui et découvrez une nouvelle façon de gérer vos voyages, plus simple et plus agréable.",
+      "planATrip": "Planifiez un voyage"
+    }
+  },
+  "footer": {
+    "slogan": "La plateforme qui connecte les agences de voyages et les voyageurs pour une expérience de réservation fluide et sécurisée.",
+    "followUs": "Suivez-nous",
+    "quickLink": "Lien rapides",
+    "legal": "Légal",
+    "contact": "Contact",
+    "allRight": "Bus Station. Tous droits réservés.",
+    "trip": "Voyages",
+    "about-us": "A propos",
+    "contact-us": "Contact",
+    "terms-and-condition": "Conditions d'utilisation",
+    "privacy-policy": "Politique de confidentialité",
+    "cookies": "Cookies",
+    "faq": "FAQ",
+    "agency": "Agences",
+    "schedule": "Lun-Ven: 9h-18h"
+  },
+  "aboutUs": {
+    "hero": {
+      "message": "A propos de nous",
+      "title": "Notre Histoire",
+      "subtitle": "Découvrez l'équipe derrière Mooving, une plateforme innovante créée par des étudiants passionnés par la technologie et le voyage.",
+      "location": "Yaounde, Cameroun",
+      "team": "6 Étudiants en Informatique",
+      "project": "Projet Universitaire"
+    },
+    "mission": {
+      "title": "Notre Mission",
+      "description": "Notre mission est de révolutionner le secteur du voyage en créant une plateforme moderne qui connecte les agences de voyage et les voyageurs, pour une expérience de réservation fluide et sécurisée."
+    },
+    "values": {
+      "education": {
+        "title": "Éducation",
+        "description": "Notre projet s'inscrit dans notre parcours académique, nous permettant d'appliquer nos connaissances théoriques à un cas concret."
+      },
+      "innovation": {
+        "title": "Innovation",
+        "description": "Nous utilisons les technologies les plus récentes pour créer une solution moderne et efficace pour le secteur du voyage."
+      },
+      "global": {
+        "title": "Vision Globale",
+        "description": "Notre plateforme est conçue pour connecter les voyageurs et les agences du monde entier, sans barrières géographiques."
+      },
+      "passion": {
+        "title": "Passion",
+        "description": "Notre amour pour le voyage et la technologie est le moteur qui nous pousse à créer la meilleure expérience possible."
+      }
+    },
+    "story": {
+      "title": "Comment tout a commencé",
+      "paragraph1": "Mooving est né d’un projet universitaire lancé en septembre 2024 par six étudiants en informatique passionnés par les voyages et la technologie.",
+      "paragraph2": "Ce projet s’inscrit pleinement dans un cadre académique et a été initié par notre professeur, le Pr Djotio, qui en est également le propriétaire.",
+      "paragraph3": "Sous sa supervision, nous avons adapté l’idée originale à nos aspirations. Ce qui n’était au départ qu’un concept académique est devenu une plateforme fonctionnelle que nous continuons de développer avec passion et détermination."
+    },
+    "team": {
+      "title": "Notre Équipe",
+      "description": "Rencontrez les esprits créatifs derrière Mooving. Notre équipe est composée de quatre étudiants en informatique, chacun apportant son expertise et sa passion.",
+      "member1": {
+        "name": "ATABONG Stephane",
+        "role": "Gestionnaire de Projet",
+        "description": "Atabong est une gestionnaire de projet expérimentée, spécialisée dans la planification et l'organisation de projets complexes. Il s'assure que tous les aspects du projet sont alignés avec les objectifs stratégiques de l'équipe et garantit la communication efficace entre les différents membres de l'équipe."
+      },
+      "member2": {
+        "name": "NGOUPAYE Thierry",
+        "role": "Développeur Full Stack ",
+        "description": "Spécialisée en développement web avec Next.js et TypeScript, Ngoupaye est responsable de l'architecture et du développement front-end de notre plateforme.Il crée des interfaces intuitives et esthétiques qui améliorent l'expérience utilisateur."
+      },
+      "member3": {
+        "name": "TCHASSI Daniel",
+        "role": "DevOps",
+        "description": "Tchassi est un expert en DevOps, maîtrisant les technologies de déploiement, d'intégration continue et de livraison continue (CI/CD). Il gère l'infrastructure , les pipelines de déploiement et les outils de monitoring pour assurer la fiabilité et la performance de notre plateforme."
+      },
+      "member4": {
+        "name": "FOMEKONG Jonathan",
+        "role": "Expert Backend",
+        "description": "Passionné par les bases de données et la sécurité, Fomekong a développé notre API robuste et les systèmes de réservation sécurisés. Il s'assure que notre backend est performant et fiable, offrant une expérience utilisateur fluide et sécurisée."
+      },
+      "member5": {
+        "name": "STEVE Ulrich",
+        "role": "UX/UI Designer",
+        "description": "Avec son œil pour le design et son souci du détail, Steve crée des interfaces intuitives et esthétiques qui améliorent l'expérience utilisateur. Elle travaille étroitement avec l'équipe de développement pour s'assurer que les designs sont fonctionnels et attrayants."
+      },
+      "member6": {
+        "name": "WOTCHOKO Yohan ",
+        "role": "UX/UI Designer",
+        "description": "Avec son œil pour le design et son souci du détail, Wotchoko crée des interfaces intuitives et esthétiques qui améliorent l'expérience utilisateur. Elle travaille étroitement avec l'équipe de développement pour s'assurer que les designs sont fonctionnels et attrayants."
+      }
+    },
+    "tech": {
+      "title": "Nos Technologies",
+      "description": "Nous utilisons un stack technologique moderne pour offrir une plateforme robuste, rapide et agréable à utiliser."
+    },
+    "contact": {
+      "title": "Envie de nous contacter?",
+      "description": "Que vous soyez une agence de voyage intéressée par notre solution ou un étudiant curieux d'en savoir plus sur notre projet, nous serions ravis d'échanger avec vous!",
+      "button": "Nous Contacter"
+    }
+  },
+  "faqPage": {
+    "title": "Foire Aux Questions",
+    "subtitle": "Trouvez rapidement des réponses à vos questions les plus fréquentes.",
+    "searchPlaceholder": "Rechercher une question...",
+    "noResults": "Aucun résultat trouvé",
+    "tryAgain": "Essayez de modifier votre recherche ou consultez une autre catégorie",
+    "stillQuestions": "Vous avez encore des questions ?",
+    "contactUs": "Notre équipe de support client est disponible pour vous aider avec n'importe quelle question que vous pourriez avoir.",
+    "contactUsButton": "Contactez-nous",
+    "responseTime": "Temps de réponse moyen : moins de 24 heures",
+    "popularTopics": "Sujets populaires",
+    "quickLinks": "Accédez rapidement à nos guides et ressources les plus consultés",
+    "readMore": "En savoir plus",
+    "categories": {
+      "all": "Toutes les questions",
+      "booking": "Réservation",
+      "payment": "Paiement",
+      "account": "Compte",
+      "travel": "Voyage",
+      "agency": "Agences",
+      "technical": "Technique",
+      "support": "Support"
+    },
+    "topics": {
+      "booking": "Guide de réservation",
+      "documents": "Documents de voyage",
+      "payment": "Options de paiement"
+    },
+    "topicDescriptions": {
+      "booking": "Apprenez à réserver votre voyage en quelques étapes simples.",
+      "documents": "Tous les documents dont vous avez besoin pour voyager sereinement.",
+      "payment": "Découvrez toutes nos options de paiement et de financement."
+    },
+    "questions": {
+      "bookingProcess": "Comment réserver un voyage via Bus Station ?",
+      "cancellation": "Quelle est la politique d'annulation ?",
+      "payment": "Quels moyens de paiement acceptez-vous ?",
+      "refund": "Combien de temps faut-il pour obtenir un remboursement ?",
+      "account": "Comment modifier les informations de mon compte ?",
+      "travelDocuments": "Quels documents de voyage sont nécessaires ?",
+      "insurance": "L'assurance voyage est-elle incluse ?",
+      "agencyRegistration": "Comment inscrire mon agence sur Bus Station ?",
+      "commission": "Quelles sont les commissions pour les agences partenaires ?",
+      "api": "Proposez-vous une API pour les agences ?",
+      "mobileApp": "Existe-t-il une application mobile Bus Station ?",
+      "customerService": "Comment contacter le service client ?"
+    },
+    "answers": {
+      "bookingProcess": "Pour réserver un voyage sur Bus Station, connectez-vous à votre compte, recherchez votre destination, sélectionnez les options qui vous conviennent et procédez au paiement. Vous recevrez une confirmation par email avec tous les détails de votre réservation.",
+      "cancellation": "Notre politique d'annulation varie selon les prestataires. En général, les annulations effectuées 30 jours avant le départ sont remboursées à 100%, 15-29 jours avant à 50%, et moins de 15 jours ne sont pas remboursables. Consultez les conditions spécifiques à chaque réservation.",
+      "payment": "Nous acceptons les cartes de crédit (Visa, Mastercard, American Express), PayPal, les virements bancaires et dans certains pays les paiements en plusieurs fois. Toutes les transactions sont sécurisées avec un cryptage SSL.",
+      "refund": "Les remboursements sont généralement traités dans un délai de 5 à 10 jours ouvrables. Le délai d'apparition sur votre compte bancaire dépend de votre banque et peut prendre jusqu'à 30 jours selon les institutions financières.",
+      "account": "Connectez-vous à votre compte, cliquez sur 'Mon profil' dans le menu principal, puis sur 'Modifier le profil'. Vous pourrez y mettre à jour vos informations personnelles, changer votre mot de passe ou mettre à jour vos préférences de communication.",
+      "travelDocuments": "Les documents requis varient selon votre destination. En général, vous aurez besoin d'un passeport valide, et parfois d'un visa. Pour certaines destinations, des certificats de vaccination peuvent être exigés. Nous vous recommandons de vérifier les exigences spécifiques à votre destination avant de voyager.",
+      "insurance": "L'assurance voyage n'est pas automatiquement incluse dans nos offres. Nous vous proposons différentes options d'assurance voyage lors du processus de réservation, couvrant l'annulation, les soins médicaux à l'étranger, les bagages perdus et plus encore.",
+      "agencyRegistration": "Pour inscrire votre agence, rendez-vous sur notre page 'Devenir partenaire' et suivez le processus d'inscription. Vous devrez fournir des informations sur votre agence, vos licences professionnelles et accepter nos conditions d'utilisation. Notre équipe examinera votre demande dans un délai de 48 heures.",
+      "commission": "Notre structure de commission est progressive et basée sur le volume de ventes. Elle varie généralement de 8% à 15%. Les partenaires Premium bénéficient de taux préférentiels et d'avantages supplémentaires. Contactez notre équipe partenaires pour plus de détails.",
+      "api": "Oui, nous proposons une API complète permettant aux agences partenaires d'intégrer notre inventaire de voyages et notre système de réservation directement dans leur site web ou application. La documentation technique et les clés d'API sont disponibles après approbation de votre compte partenaire.",
+      "mobileApp": "Oui, notre application mobile est disponible gratuitement sur iOS et Android. Elle vous permet de rechercher et réserver des voyages, d'accéder à vos réservations existantes, de recevoir des notifications de voyage et de contacter notre service client, même en déplacement.",
+      "customerService": "Notre service client est disponible 7j/7 par téléphone au +33 1 23 45 67 89, par email à support@busstation.com, ou via le chat en direct sur notre site et notre application mobile. Pour les urgences en voyage, nous disposons d'une ligne dédiée accessible 24h/24."
+    }
+  },
+  "contactPage": {
+    "title": "Contactez-nous",
+    "subtitle": "Notre équipe est à votre disposition pour répondre à vos questions et vous aider à planifier votre prochain voyage.",
+    "emailUs": "Écrivez-nous",
+    "emailDescription": "Pour toute demande d'information ou assistance",
+    "callUs": "Appelez-nous",
+    "callDescription": "Notre service client est disponible 7j/7",
+    "hours": "Horaires d'ouverture",
+    "workdays": "Lun - Ven: 9h00 - 20h00",
+    "weekend": "Sam - Dim: 10h00 - 18h00",
+    "formTitle": "Envoyez-nous un message",
+    "formDescription": "Vous avez une question ou une requête spécifique ? Remplissez le formulaire ci-dessous et nous vous répondrons dans les plus brefs délais.",
+    "name": "Nom complet",
+    "namePlaceholder": "Votre nom",
+    "email": "Email",
+    "emailPlaceholder": "votre@email.com",
+    "subject": "Sujet",
+    "subjectPlaceholder": "Objet de votre message",
+    "message": "Message",
+    "messagePlaceholder": "Détaillez votre demande ici...",
+    "privacyPolicy": "J'accepte la politique de confidentialité",
+    "sending": "Envoi en cours...",
+    "send": "Envoyer le message",
+    "successMessage": "Votre message a été envoyé avec succès. Nous reviendrons vers vous rapidement.",
+    "ourOffices": "Nos bureaux",
+    "international": "Bureaux internationaux:",
+    "globalPresence": "Notre présence mondiale",
+    "globalDescription": "Avec des bureaux et des partenaires dans plus de 30 pays, nous sommes présents partout où vos voyages vous mènent.",
+    "mapPlaceholder": "Carte interactive de notre présence mondiale"
+  },
+  "agenciesPage": {
+    "sidebar": {
+      "title": "Agences de voyage",
+      "searchPlaceholder": "Rechercher une agence...",
+      "noResults": "Aucune agence trouvée"
+    },
+    "emptyView": {
+      "title": "Explorez nos agences partenaires",
+      "description": "Sélectionnez une agence dans la liste pour voir ses détails et les voyages disponibles.",
+      "tip1": {
+        "title": "Recherche facile",
+        "description": "Trouvez des agences par nom ou localisation"
+      },
+      "tip2": {
+        "title": "Destinations variées",
+        "description": "Découvrez des voyages partout au Cameroun et au-delà"
+      },
+      "tip3": {
+        "title": "Agences vérifiées",
+        "description": "Toutes nos agences partenaires sont certifiées et fiables"
+      }
+    },
+    "profile": {
+      "backButton": "Retour à la liste",
+      "aboutTitle": "À propos",
+      "specialtiesTitle": "Spécialités",
+      "contactTitle": "Contact",
+      "phoneLabel": "Téléphone",
+      "emailLabel": "Email",
+      "websiteLabel": "Site web",
+      "tripsTitle": "Voyages disponibles",
+      "noTrips": "Cette agence n'a pas encore publié de voyages.",
+      "viewTripButton": "Voir ce voyage",
+      "moreItems": "plus"
+    }
+  },
+  "notFound": {
+    "title": "Destination introuvable",
+    "slogan": "Oups ! Il semble que vous vous soyez égaré. Cette page n'existe pas ou a été déplacée.",
+    "backToHome": "Retour à l'accueil",
+    "goBack": "Retour à la page précédente"
+  },
+  "loadingPage": {
+    "loadingText": "Chargement en cours..."
+  },
+  "dashboard": {
+    "sidebar": {
+      "overview": "Aperçu",
+      "resources": "Ressources",
+      "tripPlanning": "Planification",
+      "bookings": "Réservations",
+      "agencyMarketplace": "Mes Voyages Publiés",
+      "calendar": "Calendrier",
+      "feedback": "Retours Clients",
+      "subscription": "Abonnement",
+      "settings": "Paramètres",
+      "menu": "Menu",
+      "other": "Autres",
+      "logout": "Déconnexion"
+    },
+    "overview": {
+      "title": "Aperçu du Dashboard",
+      "subtitle": "Voici un résumé de l'activité de votre agence.",
+      "totalRevenue": "Revenu Total",
+      "totalBookings": "Réservations",
+      "publishedTrips": "Voyages Publiés",
+      "newCustomers": "Nouveaux Clients",
+      "charts": {
+        "bookingsOverview": "Aperçu des Réservations",
+        "bookingsLabel": "Réservations"
+      },
+      "recentBookings": {
+        "title": "Réservations Récentes",
+        "bookedTrip": "a réservé \"{{trip}}\""
+      }
+    },
+    "resources": {
+      "title": "Gestion des Ressources",
+      "subtitle": "Gérez vos véhicules, chauffeurs et employés.",
+      "addVehicle": "Ajouter un Véhicule",
+      "addDriver": "Ajouter un Chauffeur",
+      "addEmployee": "Ajouter un Employé",
+      "tabs": {
+        "vehicles": "Véhicules",
+        "drivers": "Chauffeurs",
+        "employees": "Employés"
+      },
+      "vehicles": {
+        "name": "Nom",
+        "plate": "Plaque",
+        "capacity": "Capacité",
+        "status": "Statut",
+        "actions": "Actions",
+        "seats": "places"
+      },
+      "drivers": {
+        "name": "Nom",
+        "license": "Permis",
+        "phone": "Téléphone",
+        "status": "Statut",
+        "actions": "Actions",
+        "yearsExp": "ans d'exp."
+      },
+      "employees": {
+        "name": "Nom",
+        "role": "Rôle",
+        "email": "Email",
+        "status": "Statut",
+        "actions": "Actions"
+      },
+      "status": {
+        "available": "Disponible",
+        "in_use": "En voyage",
+        "on_trip": "En voyage",
+        "maintenance": "En maintenance",
+        "on_leave": "En congé",
+        "active": "Actif",
+        "inactive": "Inactif"
+      }
+    },
+    "tripPlanning": {
+      "title": "Planifier un nouveau voyage",
+      "subtitle": "Remplissez les détails pour créer et publier un voyage.",
+      "drafts": {
+        "title": "Brouillons",
+        "edit": "Modifier",
+        "noDrafts": "Aucun brouillon en cours.",
+        "newTrip": "Nouveau Voyage",
+        "lastSaved": "Dernière sauvegarde: {{time}}"
+      },
+      "form": {
+        "title": "Détails du Voyage",
+        "tripTitle": "Titre du voyage",
+        "tripTitlePlaceholder": "Ex: Aventure dans les Alpes",
+        "departure": "Départ",
+        "departurePlaceholder": "Yaoundé",
+        "destination": "Destination",
+        "destinationPlaceholder": "Bafoussam",
+        "departureDate": "Date de départ",
+        "returnDate": "Date de retour",
+        "vehicle": "Véhicule",
+        "selectVehicle": "Sélectionner un véhicule",
+        "driver": "Chauffeur",
+        "selectDriver": "Sélectionner un chauffeur",
+        "price": "Prix par siège",
+        "pricePlaceholder": "Prix par siège en FCFA",
+        "description": "Description",
+        "descriptionPlaceholder": "Ajoutez des détails sur le voyage...",
+        "saveDraft": "Enregistrer en brouillon",
+        "publishTrip": "Publier le voyage",
+        "seats": "places"
+      }
+    },
+    "bookings": {
+      "title": "Gestion des Réservations",
+      "subtitle": "Consultez et gérez toutes les réservations de vos clients.",
+      "searchPlaceholder": "Rechercher par client ou voyage...",
+      "filters": "Filtres",
+      "table": {
+        "customer": "Client",
+        "trip": "Voyage",
+        "bookingDate": "Date Rés.",
+        "seats": "Sièges",
+        "amount": "Montant",
+        "status": "Statut",
+        "action": "Action"
+      },
+      "status": {
+        "confirmed": "Confirmée",
+        "pending": "En attente",
+        "cancelled": "Annulée"
+      },
+      "action": {
+        "view": "Voir"
+      }
+    },
+    "agencyMarketplace": {
+      "title": "Marketplace de l'Agence",
+      "subtitle": "Suivez les performances de vos voyages publiés.",
+      "reservations": "Réservations",
+      "estRevenue": "Revenu Est.",
+      "cancelTrip": "Annuler",
+      "status": {
+        "onSchedule": "Programmé",
+        "completed": "Terminé",
+        "cancelled": "Annulé"
+      }
+    },
+    "calendar": {
+      "title": "Calendrier des Voyages",
+      "subtitle": "Visualisez tous vos voyages planifiés, passés et à venir.",
+      "legend": {
+          "published": "Publié",
+          "completed": "Terminé",
+          "cancelled": "Annulé"
+      }
+    },
+    "feedback": {
+      "title": "Retours Clients",
+      "subtitle": "Lisez ce que vos clients pensent de leurs voyages.",
+      "onTrip": "sur le voyage"
+    },
+    "subscription": {
+      "title": "Mon Abonnement",
+      "subtitle": "Gérez votre plan d'abonnement et consultez votre facturation.",
+      "billingHistory": "Historique de facturation",
+      "currentPlan": "Plan Actuel",
+      "choosePlan": "Choisir ce Plan",
+      "plans": {
+        "basic": {
+          "name": "Basique",
+          "price": "49€/mois",
+          "features": ["10 voyages publiés", "Support par email", "Analyses de base"]
+        },
+        "pro": {
+          "name": "Pro",
+          "price": "99€/mois",
+          "features": ["Voyages illimités", "Support prioritaire", "Analyses avancées", "API d'intégration"]
+        },
+        "enterprise": {
+          "name": "Entreprise",
+          "price": "Sur devis",
+          "features": ["Toutes les fonctionnalités Pro", "Gestion multi-utilisateurs", "Support dédié"]
+        }
+      },
+      "table": {
+        "date": "Date",
+        "amount": "Montant",
+        "status": "Statut"
+      },
+      "status": {
+        "paid": "Payé"
+      }
+    },
+    "settings": {
+      "title": "Paramètres",
+      "subtitle": "Gérez les informations de votre agence et les préférences de votre compte.",
+      "saveChanges": "Enregistrer les modifications",
+      "form": {
+        "agencyName": "Nom de l'agence",
+        "contactEmail": "Email de contact",
+        "welcomeMessage": "Message d'accueil"
+      }
+    }
+  },
+  "bsm-dashboard": {
+    "sidebar": {
+        "overview": "Aperçu",
+        "affiliated-agencies": "Agences Affiliées",
+        "infrastructure": "Infrastructure",
+        "policies-taxes": "Politiques & Taxes",
+        "settings": "Paramètres",
+        "logout": "Déconnexion"
+    },
+    "overview": {
+        "title": "Tableau de Bord de la Gare Routière",
+        "subtitle": "Voici un résumé de l'activité de votre gare.",
+        "totalPassengers": "Total Passagers (Aujourd'hui)",
+        "dailyPeakHours": "Heures de Pointe",
+        "affiliatedAgencies": "Agences Affiliées",
+        "incidentReports": "Incidents Signalés",
+        "charts": {
+            "passengersOverview": "Affluence des Passagers",
+            "passengersLabel": "Passagers",
+            "dailyAffluence": "Suivi journalier de l'affluence",
+            "totalPassengersWeekly": "Total passagers cette semaine"
+        },
+        "recentActivities": {
+            "title": "Activités Récentes",
+            "subtitle": "Derniers événements",
+            "viewAll": "Voir toutes les activités",
+            "noActivity": "Aucune activité",
+            "noActivityMessage": "Les nouvelles activités apparaîtront ici"
+        }
+    }
+  }
+}

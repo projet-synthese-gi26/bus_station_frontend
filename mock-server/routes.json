@@ -1,0 +1,80 @@
+{
+  "/gare": "/gare",
+  "/gare/:id": "/gare/:id",
+  "/gare/:id/agences": "/agence?gareId=:id",
+  "/gare/:id/voyages": "/voyage?statusVoyage=PUBLIE&lieuDepart_like=:id",
+
+  "/agence": "/agence",
+  "/agence/:id": "/agence/:id",
+  "/agence/:id/public": "/agence/:id",
+  "/agence/chef-agence/:userId": "/agence?userId=:userId",
+
+  "/organisation": "/organisation",
+  "/organisation/:id": "/organisation/:id",
+
+  "/voyage/all": "/voyage",
+  "/voyage/byId/:id": "/voyage/:id",
+  "/voyage/agence/:agencyId": "/voyage?agenceVoyageId=:agencyId",
+  "/voyage/agence/:agencyId/public": "/voyage?agenceVoyageId=:agencyId&statusVoyage=PUBLIE",
+  "/voyage/:id/similaires": "/voyage",
+
+  "/vehicule/agence/:agencyId": "/vehicule?agenceVoyageId=:agencyId",
+  "/vehicule/:id": "/vehicule/:id",
+  "/vehicule": "/vehicule",
+
+  "/class-voyage/agence/:agencyId": "/classVoyage?agenceVoyageId=:agencyId",
+  "/class-voyage/:id": "/classVoyage/:id",
+  "/class-voyage": "/classVoyage",
+
+  "/utilisateur/employes/:agencyId": "/employe?agenceVoyageId=:agencyId",
+  "/utilisateur/chauffeurs/:agencyId": "/employe?agenceVoyageId=:agencyId&type=CHAUFFEUR",
+  "/utilisateur/:id": "/utilisateur/:id",
+  "/utilisateur": "/utilisateur",
+
+  "/planning/:agencyId": "/ligneService?agenceVoyageId=:agencyId",
+  "/planning": "/ligneService",
+  "/planning/:id": "/ligneService/:id",
+
+  "/voyage-brouillon/agence/:agencyId": "/voyageBrouillon?agenceVoyageId=:agencyId",
+  "/voyage-brouillon/:id": "/voyageBrouillon/:id",
+  "/voyage-brouillon": "/voyageBrouillon",
+
+  "/reservation/user/:userId": "/reservation?idUser=:userId",
+  "/reservation/voyage/:voyageId": "/reservation?idVoyage=:voyageId",
+  "/reservation/:id": "/reservation/:id",
+  "/reservation": "/reservation",
+
+  "/passager/reservation/:reservationId": "/passager?idReservation=:reservationId",
+  "/passager/:id": "/passager/:id",
+  "/passager": "/passager",
+
+  "/historique/reservation/:reservationId": "/historique?idReservation=:reservationId",
+  "/historique/:id": "/historique/:id",
+
+  "/politique-annulation/agence/:agencyId": "/politiqueAnnulation?idAgenceVoyage=:agencyId",
+  "/politique-annulation/:id": "/politiqueAnnulation/:id",
+  "/politique-annulation": "/politiqueAnnulation",
+
+  "/affiliation-contrat/gare/:gareId": "/affiliationContrat?gareId=:gareId",
+  "/affiliation-contrat/agence/:agencyId": "/affiliationContrat?agenceVoyageId=:agencyId",
+  "/affiliation-contrat/:id": "/affiliationContrat/:id",
+  "/affiliation-contrat": "/affiliationContrat",
+
+  "/affiliation-tax/gare/:gareId": "/taxeAffiliation?gareId=:gareId",
+  "/affiliation-tax/agence/:agencyId": "/taxeAffiliation?agenceVoyageId=:agencyId",
+  "/affiliation-tax/:id": "/taxeAffiliation/:id",
+  "/affiliation-tax": "/taxeAffiliation",
+
+  "/politique-gare/gare/:gareId": "/politiqueGare?gareId=:gareId",
+  "/politique-gare/:id": "/politiqueGare/:id",
+  "/politique-gare": "/politiqueGare",
+
+  "/alerte-agence/agence/:agencyId": "/alerteAgence?agenceVoyageId=:agencyId",
+  "/alerte-agence/gare/:gareId": "/alerteAgence?gareId=:gareId",
+  "/alerte-agence/:id": "/alerteAgence/:id",
+  "/alerte-agence": "/alerteAgence",
+
+  "/bsm/profil": "/bsm",
+  "/bsm/gare/:gareId": "/bsm?gareId=:gareId",
+  "/bsm/:id": "/bsm/:id"
+}

@@ -1,0 +1,31 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Fond -->
+  <rect width="200" height="200" fill="#dbeafe" rx="8" />
+  
+  <!-- Style graphique -->
+  <path d="M0,0 h200 v80 q-100,-30 -200,0 z" fill="#1d4ed8" opacity="0.6" />
+  
+  <!-- Tête -->
+  <circle cx="100" cy="70" r="40" fill="#f8fafc" />
+  
+  <!-- Cheveux courts -->
+  <path d="M65,50 h70 v-20 h-70 z" fill="#0f172a" />
+  <rect x="65" y="30" width="70" height="20" rx="10" fill="#0f172a" />
+  
+  <!-- Yeux -->
+  <circle cx="85" cy="65" r="5" fill="#1e3a8a" />
+  <circle cx="115" cy="65" r="5" fill="#1e3a8a" />
+  
+  <!-- Barbe -->
+  <path d="M85,85 Q100,95 115,85 L115,100 Q100,110 85,100 Z" fill="#334155" />
+  
+  <!-- Corps -->
+  <path d="M60,110 h80 v60 h-80 z" fill="#2563eb" />
+  
+  <!-- Accessoire -->
+  <rect x="60" y="110" width="80" height="20" fill="#475569" />
+  
+  <!-- Badge -->
+  <circle cx="50" cy="50" r="25" fill="#f0f9ff" stroke="#2563eb" stroke-width="2" />
+  <text x="50" y="55" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#2563eb" font-weight="bold">Mov</text>
+</svg>

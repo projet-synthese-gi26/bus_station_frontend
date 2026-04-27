@@ -1,0 +1,29 @@
+[
+  {
+    "titre": "string",
+    "description": "string",
+    "dateDepartPrev": "2025-12-29T08:34:48.942Z",
+    "lieuDepart": "string",
+    "lieuArrive": "string",
+    "heureArrive": "2025-12-29T08:34:48.942Z",
+    "pointDeDepart": "string",
+    "pointArrivee": "string",
+    "nbrPlaceReservable": 1073741824,
+    "heureDepartEffectif": "2025-12-29T08:34:48.942Z",
+    "nbrPlaceReserve": 1073741824,
+    "nbrPlaceConfirm": 1073741824,
+    "statusVoyage": "EN_ATTENTE",
+    "nbrPlaceRestante": 1073741824,
+    "dateLimiteReservation": "2025-12-29T08:34:48.942Z",
+    "dateLimiteConfirmation": "2025-12-29T08:34:48.942Z",
+    "smallImage": "string",
+    "bigImage": "string",
+    "chauffeurId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "vehiculeId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "classVoyageId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "agenceVoyageId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "amenities": [
+      "WIFI"
+    ]
+  }
+]

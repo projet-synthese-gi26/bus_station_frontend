@@ -1,0 +1,567 @@
+{
+  "header": {
+    "registerText": "Register"
+  },
+  "landingPage": {
+    "heroSection": {
+      "slogan": "Plan your trip, share it, and inspire dreams with Bus Station",
+      "fullSlogan": "The platform that connects travel agencies and travelers for a smooth and secure booking experience.",
+      "loginText": "Log In",
+      "ctaMarketPlace": "Explore our travel offers",
+      "registerText": "Register for free"
+    },
+    "customerSection": {
+      "title": "For Travelers",
+      "slogan": "Discover a new way to book your trips, simple, secure, and flexible.",
+      "freeSearchText": "Quickly find trips that match your criteria with our search engine.",
+      "freeSearchTitle": "Easy Search",
+      "flexiblePaymentTitle": "Flexible Payment",
+      "flexiblePaymentText": "Pay partially or in full according to your budget, with secure payment options via Orange Money and Mobile Money.",
+      "reservationManagementTitle": "Reservation Management",
+      "reservationManagementText": "Book one or more seats, cancel or modify your reservations easily from your personal space."
+    },
+    "statisticSection": {
+      "title": "Analytics and Statistics",
+      "slogan": "Track the performance of your trips with detailed statistics and real-time analytics.",
+      "followUpReservationTitle": "Reservation Tracking",
+      "followUpReservationText": "View the number of bookings per trip, by period and by destination. Identify your most popular trips.",
+      "cancellationAnalyticsTitle": "Cancellation Analysis",
+      "cancellationAnalyticsText": "Track cancellation rates and understand the reasons to improve your offers and reduce future cancellations.",
+      "commerceCustomTitle": "Custom Reports",
+      "commerceCustomText": "Generate custom reports over a given period to analyze your performance and make informed decisions."
+    },
+    "featureSection": {
+      "title": "Key features",
+      "financialManagementTitle": "Financial Management",
+      "financialManagementDescription": "Track your revenue, manage partial and full payments, and offer flexible payment options to your clients.",
+      "integratedChatTitle": "Integrated Chat",
+      "integratedChatDescription": "Communicate directly with your customers via our integrated chat system to answer their questions and finalize details.",
+      "reviewSystemTitle": "Review System",
+      "reviewSystemDescription": "Receive reviews from your customers and build your reputation. Positive reviews will help attract more travelers.",
+      "couponsAndPromotionsTitle": "Coupons and Promotions",
+      "couponsAndPromotionsDescription": "Create discount coupons and promotional offers to boost sales during slow periods.",
+      "advancedSecurityTitle": "Advanced Security",
+      "advancedSecurityDescription": "Protect your data and your customers' data with our advanced security system and secure payments.",
+      "intuitiveInterfaceTitle": "Intuitive Interface",
+      "intuitiveInterfaceDescription": "Enjoy an intuitive and easy-to-use user interface designed to simplify trip management.",
+      "exploreAllFeatureText": "Explore all features"
+    },
+    "agencySection": {
+      "title": "For Travel Agencies",
+      "slogan": "Bus Station offers travel agencies a complete platform to manage their operations and grow their customer base.",
+      "exclusiveBenefits": "Exclusive Benefits",
+      "features": {
+        "planning": {
+          "title": "Trip Planning",
+          "description": "Easily create and plan your trips with our intuitive interface. Set dates, routes, prices, and availability in just a few clicks."
+        },
+        "publishing": {
+          "title": "Publishing and Management",
+          "description": "Publish your trips to make them visible to potential clients. Edit or cancel trips anytime according to your needs."
+        },
+        "tickets": {
+          "title": "Ticket Management",
+          "description": "Create and manage tickets for your trips. Offer discount coupons to attract more customers and build loyalty."
+        }
+      },
+      "advantages": {
+        "visibility": {
+          "title": "International Visibility",
+          "description": "Reach customers from around the world"
+        },
+        "customers": {
+          "title": "Customer Management",
+          "description": "Track your travelers' preferences"
+        },
+        "analytics": {
+          "title": "Detailed Analytics",
+          "description": "Statistics and custom reports"
+        },
+        "security": {
+          "title": "Transaction Security",
+          "description": "Secure payments and data protection"
+        }
+      }
+    },
+    "CTASection": {
+      "title": "Ready to simplify your trips and bookings?",
+      "slogan": "Join Bus Station today and discover a new, easier, and more enjoyable way to manage your travels.",
+      "planATrip": "Plan a trip"
+    }
+  },
+  "footer": {
+    "slogan": "The platform that connects travel agencies and travelers for a smooth and secure booking experience.",
+    "followUs": "Follow us",
+    "quickLink": "Quick links",
+    "legal": "Legal",
+    "contact": "Contact",
+    "allRight": "Bus Station. All rights reserved.",
+    "trip": "Trips",
+    "about-us": "About us",
+    "contact-us": "Contact us",
+    "terms-and-condition": "Terms and Conditions",
+    "privacy-policy": "Privacy Policy",
+    "cookies": "Cookies",
+    "faq": "FAQ",
+    "agency": "Agencies",
+    "schedule": "Mon-Fri: 9AM - 6PM"
+  },
+  "aboutUs": {
+    "hero": {
+      "message": "About us",
+      "title": "Our Story",
+      "subtitle": "Discover the team behind Mooving, an innovative platform created by students passionate about technology and travel.",
+      "location": "Yaounde, Cameroon",
+      "team": "6 Computer Science Students",
+      "project": "University Project"
+    },
+    "mission": {
+      "title": "Our Mission",
+      "description": "Our mission is to revolutionize the travel industry by creating a modern platform that connects travel agencies and travelers, for a smooth and secure booking experience."
+    },
+    "values": {
+      "education": {
+        "title": "Education",
+        "description": "Our project is part of our academic journey, allowing us to apply our theoretical knowledge to a concrete case."
+      },
+      "innovation": {
+        "title": "Innovation",
+        "description": "We use the latest technologies to create a modern and efficient solution for the travel industry."
+      },
+      "global": {
+        "title": "Global Vision",
+        "description": "Our platform is designed to connect travelers and agencies from around the world, without geographical barriers."
+      },
+      "passion": {
+        "title": "Passion",
+        "description": "Our love for travel and technology is the driving force that pushes us to create the best possible experience."
+      }
+    },
+    "story": {
+      "title": "How It All Started",
+      "paragraph1": "Mooving was born from a university project launched in September 2024 by six computer science students passionate about travel and technology.",
+      "paragraph2": "This project is entirely academic in nature and was initiated by our professor, Pr Djotio, who is also the project owner.",
+      "paragraph3": "Under his guidance, we adapted the original idea to fit our aspirations. What started as an academic concept has become a functional platform that we continue to develop with passion and determination."
+    },
+    "team": {
+      "title": "Our Team",
+      "description": "Meet the creative minds behind Mooving. Our team consists of six computer science students, each bringing their expertise and passion.",
+      "member1": {
+        "name": "ATABONG Stephane",
+        "role": "Project Manager",
+        "description": "Atabong is an experienced project manager, specializing in the planning and organization of complex projects. She ensures that all aspects of the project are aligned with the strategic goals of the team and facilitates effective communication among all team members."
+      },
+      "member2": {
+        "name": "NGOUPAYE Thierry",
+        "role": "Full Stack Developer",
+        "description": "Specialized in web development with Next.js and TypeScript, Ngoupaye is responsible for the architecture and front-end development of our platform. She creates intuitive and aesthetically pleasing interfaces that enhance user experience."
+      },
+      "member3": {
+        "name": "TCHASSI Daniel",
+        "role": "DevOps",
+        "description": "Tchassi is an expert in DevOps, mastering deployment, continuous integration, and continuous delivery (CI/CD) technologies. He manages the cloud infrastructure, deployment pipelines, and monitoring tools to ensure the reliability and performance of our platform."
+      },
+      "member4": {
+        "name": "FOMEKONG Jonathan",
+        "role": "Backend Expert",
+        "description": "Passionate about databases and security, Fomekong has developed a robust API and secure reservation systems. He ensures that our backend is performant and reliable, offering a smooth and secure user experience."
+      },
+      "member5": {
+        "name": "STEVE Ulrich",
+        "role": "UX/UI Designer",
+        "description": "With her eye for design and attention to detail, Steve creates intuitive and aesthetically pleasing interfaces that enhance user experience. She works closely with the development team to ensure that designs are both functional and appealing."
+      },
+      "member6": {
+        "name": "WOTCHOKO Yohan",
+        "role": "UX/UI Designer",
+        "description": "With her eye for design and attention to detail, Wotchoko creates intuitive and aesthetically pleasing interfaces that enhance user experience. She works closely with the development team to ensure that designs are both functional and appealing."
+      }
+    },
+    "tech": {
+      "title": "Our Technologies",
+      "description": "We use a modern technology stack to deliver a robust, fast, and pleasant-to-use platform."
+    },
+    "contact": {
+      "title": "Want to get in touch?",
+      "description": "Whether you're a travel agency interested in our solution or a student curious to learn more about our project, we'd love to hear from you!",
+      "button": "Contact Us"
+    }
+  },
+  "faqPage": {
+    "title": "Frequently Asked Questions",
+    "subtitle": "Quickly find answers to your most common questions.",
+    "searchPlaceholder": "Search for a question...",
+    "noResults": "No results found",
+    "tryAgain": "Try modifying your search or consult another category",
+    "stillQuestions": "Do you still have questions?",
+    "contactUs": "Our customer support team is available to help you with any questions you might have.",
+    "contactUsButton": "Contact us",
+    "responseTime": "Average response time: less than 24 hours",
+    "popularTopics": "Popular Topics",
+    "quickLinks": "Quickly access our most consulted guides and resources",
+    "readMore": "Learn more",
+    "categories": {
+      "all": "All questions",
+      "booking": "Booking",
+      "payment": "Payment",
+      "account": "Account",
+      "travel": "Travel",
+      "agency": "Agencies",
+      "technical": "Technical",
+      "support": "Support"
+    },
+    "topics": {
+      "booking": "Booking Guide",
+      "documents": "Travel Documents",
+      "payment": "Payment Options"
+    },
+    "topicDescriptions": {
+      "booking": "Learn how to book your trip in a few simple steps.",
+      "documents": "All the documents you need to travel with peace of mind.",
+      "payment": "Discover all our payment and financing options."
+    },
+    "questions": {
+      "bookingProcess": "How to book a trip via Bus Station?",
+      "cancellation": "What is the cancellation policy?",
+      "payment": "What payment methods do you accept?",
+      "refund": "How long does it take to get a refund?",
+      "account": "How do I modify my account information?",
+      "travelDocuments": "What travel documents are required?",
+      "insurance": "Is travel insurance included?",
+      "agencyRegistration": "How do I register my agency on Bus Station ?",
+      "commission": "What are the commissions for partner agencies?",
+      "api": "Do you offer an API for agencies?",
+      "mobileApp": "Is there a Bus Station mobile application?",
+      "customerService": "How do I contact customer service?"
+    },
+    "answers": {
+      "bookingProcess": "To book a trip on Bus Station, log in to your account, search for your destination, select the options that suit you and proceed to payment. You will receive a confirmation email with all the details of your reservation.",
+      "cancellation": "Our cancellation policy varies depending on the provider. Generally, cancellations made 30 days before departure are refunded 100%, 15-29 days before 50%, and less than 15 days are non-refundable. Consult the specific conditions for each reservation.",
+      "payment": "We accept credit cards (Visa, Mastercard, American Express), PayPal, bank transfers and in some countries installment payments. All transactions are secured with SSL encryption.",
+      "refund": "Refunds are generally processed within 5 to 10 business days. The time it takes to appear on your bank account depends on your bank and can take up to 30 days depending on financial institutions.",
+      "account": "Log in to your account, click on 'My Profile' in the main menu, then on 'Edit Profile'. You can update your personal information, change your password or update your communication preferences.",
+      "travelDocuments": "Required documents vary depending on your destination. In general, you will need a valid passport, and sometimes a visa. For certain destinations, vaccination certificates may be required. We recommend checking the specific requirements for your destination before traveling.",
+      "insurance": "Travel insurance is not automatically included in our offers. We offer various travel insurance options during the booking process, covering cancellation, medical care abroad, lost luggage and more.",
+      "agencyRegistration": "To register your agency, go to our 'Become a Partner' page and follow the registration process. You will need to provide information about your agency, your professional licenses and accept our terms of use. Our team will review your application within 48 hours.",
+      "commission": "Our commission structure is progressive and based on sales volume. It generally ranges from 8% to 15%. Premium partners benefit from preferential rates and additional advantages. Contact our partner team for more details.",
+      "api": "Yes, we offer a complete API allowing partner agencies to integrate our travel inventory and booking system directly into their website or application. Technical documentation and API keys are available after approval of your partner account.",
+      "mobileApp": "Yes, our mobile application is available for free on iOS and Android. It allows you to search and book trips, access your existing reservations, receive travel notifications and contact our customer service, even while on the move.",
+      "customerService": "Our customer service is available 7 days a week by phone at +33 1 23 45 67 89, by email at support@busstation.com, or via live chat on our website and mobile application. For travel emergencies, we have a dedicated line accessible 24/7."
+    }
+  },
+  "contactPage": {
+    "title": "Contact Us",
+    "subtitle": "Our team is available to answer your questions and help you plan your next trip.",
+    "emailUs": "Email Us",
+    "emailDescription": "For any information request or assistance",
+    "callUs": "Call Us",
+    "callDescription": "Our customer service is available 7 days a week",
+    "hours": "Opening Hours",
+    "workdays": "Mon - Fri: 9:00 AM - 8:00 PM",
+    "weekend": "Sat - Sun: 10:00 AM - 6:00 PM",
+    "formTitle": "Send Us a Message",
+    "formDescription": "Do you have a question or specific request? Fill out the form below and we will respond as soon as possible.",
+    "name": "Full Name",
+    "namePlaceholder": "Your name",
+    "email": "Email",
+    "emailPlaceholder": "your@email.com",
+    "subject": "Subject",
+    "subjectPlaceholder": "Subject of your message",
+    "message": "Message",
+    "messagePlaceholder": "Detail your request here...",
+    "privacyPolicy": "I accept the privacy policy",
+    "sending": "Sending...",
+    "send": "Send Message",
+    "successMessage": "Your message has been sent successfully. We will get back to you quickly.",
+    "ourOffices": "Our Offices",
+    "international": "International offices:",
+    "globalPresence": "Our Global Presence",
+    "globalDescription": "With offices and partners in more than 30 countries, we are present wherever your travels take you.",
+    "mapPlaceholder": "Interactive map of our global presence"
+  },
+  "agenciesPage": {
+    "sidebar": {
+      "title": "Travel Agencies",
+      "searchPlaceholder": "Search an agency...",
+      "noResults": "No agencies found"
+    },
+    "emptyView": {
+      "title": "Explore our partner agencies",
+      "description": "Select an agency from the list to view its details and available trips.",
+      "tip1": {
+        "title": "Easy search",
+        "description": "Find agencies by name or location"
+      },
+      "tip2": {
+        "title": "Various destinations",
+        "description": "Discover trips across Cameroon and beyond"
+      },
+      "tip3": {
+        "title": "Verified agencies",
+        "description": "All our partner agencies are certified and reliable"
+      }
+    },
+    "profile": {
+      "backButton": "Back to list",
+      "aboutTitle": "About",
+      "specialtiesTitle": "Specialties",
+      "contactTitle": "Contact",
+      "phoneLabel": "Phone",
+      "emailLabel": "Email",
+      "websiteLabel": "Website",
+      "tripsTitle": "Available trips",
+      "noTrips": "This agency hasn't published any trips yet.",
+      "viewTripButton": "View this trip",
+      "moreItems": "more"
+    }
+  },
+  "notFound": {
+    "title": "Destination not found",
+    "slogan": "Oops! It looks like you’ve lost your way. This page doesn’t exist or has been moved.",
+    "backToHome": "Back to home",
+    "goBack": "Go back to the previous page"
+  },
+  "loadingPage": {
+    "loadingText": "Loading..."
+  },
+  "dashboard": {
+    "sidebar": {
+      "overview": "Overview",
+      "resources": "Resources",
+      "tripPlanning": "Trip Planning",
+      "bookings": "Bookings",
+      "agencyMarketplace": "My Published Trips",
+      "calendar": "Calendar",
+      "feedback": "Feedback",
+      "subscription": "Subscription",
+      "settings": "Settings",
+      "menu": "Menu",
+      "other": "Others",
+      "logout": "Logout"
+    },
+    "overview": {
+      "title": "Dashboard Overview",
+      "subtitle": "Here is a summary of your agency's activity.",
+      "totalRevenue": "Total Revenue",
+      "totalBookings": "Bookings",
+      "publishedTrips": "Published Trips",
+      "newCustomers": "New Customers",
+      "charts": {
+        "bookingsOverview": "Bookings Overview",
+        "bookingsLabel": "Bookings"
+      },
+      "recentBookings": {
+        "title": "Recent Bookings",
+        "bookedTrip": "booked \"{{trip}}\""
+      }
+    },
+    "resources": {
+      "title": "Resource Management",
+      "subtitle": "Manage your vehicles, drivers, and employees.",
+      "addVehicle": "Add Vehicle",
+      "addDriver": "Add Driver",
+      "addEmployee": "Add Employee",
+      "tabs": {
+        "vehicles": "Vehicles",
+        "drivers": "Drivers",
+        "employees": "Employees"
+      },
+      "vehicles": {
+        "name": "Name",
+        "plate": "Plate",
+        "capacity": "Capacity",
+        "status": "Status",
+        "actions": "Actions",
+        "seats": "seats"
+      },
+      "drivers": {
+        "name": "Name",
+        "license": "License",
+        "phone": "Phone",
+        "status": "Status",
+        "actions": "Actions",
+        "yearsExp": "yrs exp."
+      },
+      "employees": {
+        "name": "Name",
+        "role": "Role",
+        "email": "Email",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "status": {
+        "available": "Available",
+        "in_use": "On Trip",
+        "on_trip": "On Trip",
+        "maintenance": "Maintenance",
+        "on_leave": "On Leave",
+        "active": "Active",
+        "inactive": "Inactive"
+      }
+    },
+    "tripPlanning": {
+      "title": "Plan a New Trip",
+      "subtitle": "Fill in the details to create and publish a trip.",
+      "drafts": {
+        "title": "Drafts",
+        "edit": "Edit",
+        "noDrafts": "No drafts in progress.",
+        "newTrip": "New Trip",
+        "lastSaved": "Last saved: {{time}}"
+      },
+      "form": {
+        "title": "Trip Details",
+        "tripTitle": "Trip Title",
+        "tripTitlePlaceholder": "Ex: Adventure in the Alps",
+        "departure": "Departure",
+        "departurePlaceholder": "Yaoundé",
+        "destination": "Destination",
+        "destinationPlaceholder": "Bafoussam",
+        "departureDate": "Departure Date",
+        "returnDate": "Return Date",
+        "vehicle": "Vehicle",
+        "selectVehicle": "Select a vehicle",
+        "driver": "Driver",
+        "selectDriver": "Select a driver",
+        "price": "Price per seat",
+        "pricePlaceholder": "Price per seat in FCFA",
+        "description": "Description",
+        "descriptionPlaceholder": "Add details about the trip...",
+        "saveDraft": "Save as Draft",
+        "publishTrip": "Publish Trip",
+        "seats": "seats"
+      }
+    },
+    "bookings": {
+      "title": "Booking Management",
+      "subtitle": "View and manage all your customer bookings.",
+      "searchPlaceholder": "Search by customer or trip...",
+      "filters": "Filters",
+      "table": {
+        "customer": "Customer",
+        "trip": "Trip",
+        "bookingDate": "Booking Date",
+        "seats": "Seats",
+        "amount": "Amount",
+        "status": "Status",
+        "action": "Action"
+      },
+      "status": {
+        "confirmed": "Confirmed",
+        "pending": "Pending",
+        "cancelled": "Cancelled"
+      },
+      "action": {
+        "view": "View"
+      }
+    },
+    "agencyMarketplace": {
+      "title": "Agency Marketplace",
+      "subtitle": "Track the performance of your published trips.",
+      "reservations": "Reservations",
+      "estRevenue": "Est. Revenue",
+      "cancelTrip": "Cancel",
+      "status": {
+        "onSchedule": "On Schedule",
+        "completed": "Completed",
+        "cancelled": "Cancelled"
+      }
+    },
+    "calendar": {
+      "title": "Trip Calendar",
+      "subtitle": "Visualize all your planned, past, and upcoming trips.",
+      "legend": {
+        "published": "Published",
+        "completed": "Completed",
+        "cancelled": "Cancelled"
+      }
+    },
+    "feedback": {
+      "title": "Customer Feedback",
+      "subtitle": "Read what your customers think about their trips.",
+      "onTrip": "on trip"
+    },
+    "subscription": {
+      "title": "My Subscription",
+      "subtitle": "Manage your subscription plan and view your billing.",
+      "billingHistory": "Billing History",
+      "currentPlan": "Current Plan",
+      "choosePlan": "Choose Plan",
+      "plans": {
+        "basic": {
+          "name": "Basic",
+          "price": "$49/month",
+          "features": ["10 published trips", "Email support", "Basic analytics"]
+        },
+        "pro": {
+          "name": "Pro",
+          "price": "$99/month",
+          "features": [
+            "Unlimited trips",
+            "Priority support",
+            "Advanced analytics",
+            "API integration"
+          ]
+        },
+        "enterprise": {
+          "name": "Enterprise",
+          "price": "Custom",
+          "features": [
+            "All Pro features",
+            "Multi-user management",
+            "Dedicated support"
+          ]
+        }
+      },
+      "table": {
+        "date": "Date",
+        "amount": "Amount",
+        "status": "Status"
+      },
+      "status": {
+        "paid": "Paid"
+      }
+    },
+    "settings": {
+      "title": "Settings",
+      "subtitle": "Manage your agency information and account preferences.",
+      "saveChanges": "Save Changes",
+      "form": {
+        "agencyName": "Agency Name",
+        "contactEmail": "Contact Email",
+        "welcomeMessage": "Welcome Message"
+      }
+    }
+  },
+    "bsm-dashboard": {
+    "sidebar": {
+        "overview": "Overview",
+        "affiliated-agencies": "Affiliated Agencies",
+        "infrastructure": "Infrastructure",
+        "policies-taxes": "Policies & Taxes",
+        "settings": "Settings",
+        "logout": "Logout"
+    },
+    "overview": {
+        "title": "Bus Station Dashboard",
+        "subtitle": "Here is a summary of your station's activity.",
+        "totalPassengers": "Total Passengers (Today)",
+        "dailyPeakHours": "Peak Hours",
+        "affiliatedAgencies": "Affiliated Agencies",
+        "incidentReports": "Reported Incidents",
+        "charts": {
+            "passengersOverview": "Passenger Traffic",
+            "passengersLabel": "Passengers",
+            "dailyAffluence": "Daily passenger traffic tracking",
+            "totalPassengersWeekly": "Total passengers this week"
+        },
+        "recentActivities": {
+            "title": "Recent Activities",
+            "subtitle": "Latest events",
+            "viewAll": "View all activities",
+            "noActivity": "No activity",
+            "noActivityMessage": "New activities will appear here"
+        }
+    }
+  }
+}
