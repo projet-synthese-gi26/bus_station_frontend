@@ -7,10 +7,15 @@ RUN npm install && npm ci --prefer-offline
 
 COPY . .
 
-ARG API_BASE_URL=https://traefikdev.yowyob.com/poi-navigoo
-RUN echo "API_BASE_URL=${API_BASE_URL}" > .env && \
-    cat .env && \
-    npm run build
+ENV NEXT_PUBLIC_TRIP_AGENCY_BACKEND_API_URL=https://traefikdev.yowyob.com/bus-station \
+    NEXT_PUBLIC_YOWYOB_BACKEND_API_URL=https://traefikdev.yowyob.com/bus-station \
+    NEXT_PUBLIC_AGENCY_BUSINESS_DOMAIN_ID=d65aa9f0-2ffe-11f0-9b96-7719a3386480 \
+    NEXT_PUBLIC_POXY_URL_YOYOWB_BACKEND=/api \
+    NEXT_PUBLIC_PROXY_URL_TRIP_AGENCY=/trip-agency \
+    NEXT_PUBLIC_EXTERN_PROXY_URL=https://cors-anywhere.herokuapp.com \
+    SECRET_KEY=shderdkqsisdis@!lqdnqdknq
+    
+RUN npm run build
 
 FROM node:20-alpine AS runner
 
