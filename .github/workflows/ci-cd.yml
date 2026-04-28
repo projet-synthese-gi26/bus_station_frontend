@@ -10,7 +10,7 @@ jobs:
   pipeline:
     uses: projet-synthese-gi26/workflows/.github/workflows/next-js-ci-cd.yml@main
     with:
-      app_name: ridngo-web
+      app_name: bus-station-web
       node_version: "20"
       run_lint: true
     secrets:
