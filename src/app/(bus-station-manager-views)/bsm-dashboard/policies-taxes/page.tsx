@@ -193,7 +193,7 @@ const CAT_COLOR: Record<CategoriePolitique, string> = {
   FRAIS_SERVICE: "bg-teal-50 text-teal-700",
 };
 
-export function PoliciesTaxesPage() {
+export default function PoliciesTaxesPage() {
   const {
     politiques,
     taxes,
@@ -398,5 +398,3 @@ export function PoliciesTaxesPage() {
     </div>
   );
 }
-
-export default PoliciesTaxesPage;

@@ -8,7 +8,8 @@
  */
 
 export const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
+  process.env.NEXT_PUBLIC_TRIP_AGENCY_BACKEND_API_URL ??
+  "http://localhost:8080";
 
 /**
  * Préfixes de routes organisés par domaine.

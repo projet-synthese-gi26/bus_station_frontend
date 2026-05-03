@@ -37,6 +37,7 @@ import type {
 import type { ClassVoyage } from "@/lib/types/generated-api";
 import { useEffect } from "react";
 import toast from "react-hot-toast";
+import { isMoyenPaiementObject } from "@/lib/types/agence.types";
 
 export default function AgencyPlanningPage() {
   const {
@@ -145,7 +146,8 @@ export default function AgencyPlanningPage() {
 
       {/* Section 2 — Moyens de paiement */}
       <EditableMoyensPaiement
-        moyens={agency.moyensPaiement ?? []}
+        // ✅ Après
+        moyens={(agency.moyensPaiement ?? []).filter(isMoyenPaiementObject)}
         onSave={saveMoyensPaiement}
       />
 

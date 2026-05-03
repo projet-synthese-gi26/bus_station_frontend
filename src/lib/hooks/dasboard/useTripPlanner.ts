@@ -241,7 +241,8 @@ export function useTripPlanner() {
         // ── Mode DRAFT — pré-remplir depuis un VoyageBrouillon ──────────
         if (isDraftMode && draftId) {
           try {
-            const brouillon: VoyageBrouillon = await getBrouillonById(draftId);
+            const brouillon = await getBrouillonById(draftId);
+            if (!brouillon) return;
             form.reset({
               titre: brouillon.titre,
               description: brouillon.notes ?? "",

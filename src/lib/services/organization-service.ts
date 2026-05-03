@@ -1,31 +1,47 @@
-import axios, {AxiosResponse} from "axios";
-import {OrganizationFormType} from "@/lib/types/schema/organizationSchema";
-import {Organization} from "@/lib/types/models/Organization";
+/**
+ * organization-service.ts
+ * Endpoint : POST /organizations
+ * Public — pas de token requis pour créer une organisation.
+ */
+import axios, { type AxiosResponse } from "axios";
+import apiClient from "@/lib/api/api-client";
+import { API_BASE_URL } from "@/lib/config/api.config";
+import type { Organization } from "@/lib/types/models/Organization";
+import type { OrganizationFormType } from "@/lib/types/schema/organizationSchema";
 
-
-
-const url: string = `${process.env.NEXT_PUBLIC_TRIP_AGENCY_BACKEND_API_URL}`
-
-
-export async function createOrganization(data: OrganizationFormType): Promise<Organization|null>
-{
-    try
-    {
-        const response: AxiosResponse<Organization> = await axios.post(`${url}/organizations`, data);
-        if(response.status === 201)
-        {
-            console.log(response);
-            return response?.data;
-        }
-        else
-        {
-            console.warn("Unattended HTTP code", response?.data);
-            return null
-        }
+/**
+ * POST /organizations
+ * Crée une nouvelle organisation.
+ * ⚠️ Utilise axios brut (pas apiClient) : à l'inscription l'utilisateur
+ *    n'a pas encore de token JWT valide.
+ */
+export async function createOrganization(
+  data: OrganizationFormType,
+): Promise<Organization | null> {
+  try {
+    const response: AxiosResponse<Organization> = await axios.post(
+      `${API_BASE_URL}/organizations`,
+      data,
+      { headers: { "Content-Type": "application/json" } },
+    );
+    if (response.status === 201 || response.status === 200) {
+      return response.data;
     }
-    catch (error)
-    {
-        console.error("Error when creating the organization ",error);
-        throw error;
-    }
+    console.warn("Code HTTP inattendu", response.status);
+    return null;
+  } catch (error) {
+    console.error("Erreur création organisation :", error);
+    throw error;
+  }
+}
+
+/**
+ * GET /organizations/{id}
+ * Récupère une organisation par son ID.
+ */
+export async function getOrganizationById(id: string): Promise<Organization> {
+  const res: AxiosResponse<Organization> = await apiClient.get(
+    `/organizations/${id}`,
+  );
+  return res.data;
 }

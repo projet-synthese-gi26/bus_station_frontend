@@ -1,12 +1,17 @@
 /**
  * agence.types.ts
  *
- * Extension du type `AgenceVoyage` généré par openapi-typescript-codegen.
- * On NE modifie PAS les fichiers generated-api. On étend ici.
+ * Type AgenceVoyageFull aligné avec la réponse backend
+ * (`AgenceVoyageResponseDTO`) tout en conservant les champs étendus
+ * de la conception v4 (logoUrl, statutAgence, moyensPaiement…).
  *
- * Champs nouveaux (conception v4) :
- *   - logoUrl, statutAgence, moyensPaiement[]
- *   - vehiculeIdDefaut, chauffeurIdDefaut, nbrPlaceDefaut, dateLimite*
+ * Évolutions importantes par rapport à la version précédente :
+ *   - `gareIds: string[]` (UUIDs des gares affiliées) — backend renvoie
+ *     une liste, pas un seul ID. Utilisé pour le filtre "par gare" sur
+ *     la page /agency.
+ *   - `moyensPaiement` accepte string[] (réponse backend) ou MoyenPaiement[]
+ *     (objets legacy). Le composant qui consomme doit gérer les deux cas.
+ *   - `rating`, `specialties`, `contact` ajoutés (renvoyés par le backend).
  */
 
 // ── Énumérations ─────────────────────────────────────────────────────────────
@@ -34,36 +39,65 @@ export interface MoyenPaiement {
   actif: boolean;
 }
 
+export interface ContactInfo {
+  email?: string | null;
+  phone?: string | null;
+  website?: string | null;
+}
+
 // ── Type principal ────────────────────────────────────────────────────────────
 
 /**
- * AgenceVoyageFull = AgenceVoyage (generated) + champs étendus.
- * À utiliser partout où on a besoin du profil complet de l'agence.
+ * AgenceVoyageFull — modèle agence côté frontend.
+ *
+ * Construit par `normalizeAgence()` à partir de la réponse backend.
+ * Tous les champs sont nommés en camelCase (convention frontend).
  */
 export interface AgenceVoyageFull {
-  // Champs du generated-api (AgenceVoyage)
-  agencyId: string;
+  // Identifiants
+  agencyId: string; // mappé depuis `id` backend
   organisationId?: string;
   userId?: string;
+
+  // Identité
   longName?: string;
   shortName?: string;
   location?: string;
-  socialNetwork?: string;
+  logoUrl?: string | null;
   description?: string;
   greetingMessage?: string;
+  socialNetwork?: string;
 
-  // Champs étendus
-  gareId?: number;
-  logoUrl?: string | null;
+  // Statut (dérivé de `isActive` côté backend)
   statutAgence: StatutAgence;
-  moyensPaiement?: MoyenPaiement[];
 
-  // Ressources par défaut (génération automatique)
+  // Affiliations (UUIDs des gares routières)
+  gareIds?: string[];
+
+  // Champs renvoyés par le backend mais non encore utilisés partout
+  rating?: number;
+  specialties?: string[];
+  contact?: ContactInfo;
+
+  // Moyens de paiement — peut être un tableau de strings (backend brut)
+  // OU d'objets MoyenPaiement (config étendue côté front).
+  moyensPaiement?: Array<string | MoyenPaiement>;
+
+  // Ressources par défaut (génération automatique de voyages)
   vehiculeIdDefaut?: string | null;
   chauffeurIdDefaut?: string | null;
   nbrPlaceDefaut?: number | null;
   dateLimiteResaAvant?: number | null;
   dateLimiteConfAvant?: number | null;
+}
+
+// ── Helpers de discrimination moyensPaiement ─────────────────────────────────
+
+/** Retourne true si l'élément est un objet MoyenPaiement (pas une string). */
+export function isMoyenPaiementObject(
+  m: string | MoyenPaiement,
+): m is MoyenPaiement {
+  return typeof m === "object" && m !== null && "type" in m;
 }
 
 // ── DTO de mutation ───────────────────────────────────────────────────────────
@@ -79,7 +113,7 @@ export interface UpdateAgenceProfilDTO {
 }
 
 export interface UpdateMoyensPaiementDTO {
-  moyensPaiement: MoyenPaiement[];
+  moyensPaiement: string[];
 }
 
 export interface UpdateRessourcesDefautDTO {
@@ -91,5 +125,7 @@ export interface UpdateRessourcesDefautDTO {
 }
 
 export interface UpdateStatutAgenceDTO {
-  statutAgence: StatutAgence;
+  active: boolean;
+  motif?: string;
 }
+// END OF FILE: src/lib/types/agence.types.ts

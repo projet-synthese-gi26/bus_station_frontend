@@ -5,10 +5,8 @@
 
 import {
   Bell,
-  Send,
   AlertTriangle,
   CreditCard,
-  Info,
   ShieldOff,
   ShieldCheck,
 } from "lucide-react";
@@ -32,7 +30,11 @@ const LABEL: Record<TypeAlerte, string> = {
   REACTIVATION_NOTICE: "Avis de réactivation",
 };
 
-export function AlertesPage() {
+// IMPORTANT : pas de `export` devant la fonction.
+// Dans Next.js App Router, les fichiers `page.tsx` ne doivent avoir
+// qu'un `export default`. Tout autre export nommé (sauf `metadata`,
+// `generateMetadata`, `generateStaticParams`, etc.) est rejeté au build.
+function AlertesPage() {
   const { alertes, agences, isLoading } = useBsm();
 
   if (isLoading)
@@ -120,3 +122,4 @@ export function AlertesPage() {
 }
 
 export default AlertesPage;
+// END OF FILE: src/app/(bus-station-manager-views)/bsm-dashboard/alertes/page.tsx

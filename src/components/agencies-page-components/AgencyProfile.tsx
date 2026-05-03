@@ -11,6 +11,7 @@
  *   - Section Moyens de paiement (toujours visible, hors onglets)
  */
 
+import { isMoyenPaiementObject } from "@/lib/types/agence.types";
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -272,7 +273,9 @@ export default function AgencyProfile({
       </div>
 
       {/* Section Moyens de paiement — toujours visible */}
-      <PaymentMethodsSection moyensPaiement={agency.moyensPaiement} />
+      <PaymentMethodsSection
+        moyensPaiement={agency.moyensPaiement?.filter(isMoyenPaiementObject)}
+      />
     </div>
   );
 }
