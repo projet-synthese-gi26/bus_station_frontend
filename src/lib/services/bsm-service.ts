@@ -1,151 +1,292 @@
 /**
- * bsm-service.ts  (nouveau — P-24 à P-29)
+ * bsm-service.ts  (recâblé — Bloc BSM)
+ * Emplacement : src/lib/services/bsm-service.ts
  *
- * Remplace bus-station-service.ts qui utilisait les types mock (BusStation, Agency, Trip)
- * et des URLs hardcodées localhost:3001.
- * Utilise apiClient + API_ROUTES + nouveaux types de conception.
+ * Tous les appels utilisent apiClient (default export) + le pattern
+ * normalize + catch → fallback établi dans le projet.
+ *
+ * ⚠️  ANOMALIES BACKEND À SIGNALER (voir commentaires inline) :
+ *  1. PUT statut agence : BSM_OPERATIONS.md dit /bsm/agence/{id}/statut
+ *     mais ETAPE_2 dit /agence/{id}/statut — on utilise /bsm/agence/{id}/statut
+ *     car c'est dans le périmètre BSM. À aligner avec l'équipe backend.
+ *  2. GET alertes gare : ETAPE_2 dit /alerte/gare/{gareId}
+ *     mais la todolist mentionne /alerte-agence/gare/{gareId}.
+ *     On utilise /alerte/gare/{gareId} (source la plus récente = ETAPE_2).
+ *  3. Taxes affiliation : BSM_OPERATIONS.md dit POST /bsm/taxe-affiliation
+ *     mais ETAPE_2 dit POST /taxe-affiliation. On suit ETAPE_2.
  */
 
 import apiClient from "@/lib/api/api-client";
-import { API_ROUTES } from "@/lib/config/api.config";
 import type { Gare, UpdateGareDTO } from "@/lib/types/gare.types";
 import type { AgenceVoyageFull } from "@/lib/types/agence.types";
 import type {
+  TaxeAffiliation,
+  PolitiqueGare,
+  AlerteAgence,
   BsmCompte,
   UpdateBsmCompteDTO,
-  TaxeAffiliation,
-  UpdateTaxeStatutDTO,
-  PolitiqueGare,
+  CreateAlerteDTO,
   CreatePolitiqueDTO,
   UpdatePolitiqueDTO,
-  AlerteAgence,
-  CreateAlerteDTO,
 } from "@/lib/types/bsm.types";
+import type { StatutAgence } from "@/lib/types/agence.types";
 
-// ─── Gare ─────────────────────────────────────────────────────────────────────
+// ── Helpers ───────────────────────────────────────────────────────────────────
 
-export async function getBsmGare(gareId: number): Promise<Gare> {
-  const res = await apiClient.get<Gare>(API_ROUTES.gare.byId(gareId));
-  return res.data;
+function toArray<T>(val: unknown): T[] {
+  if (Array.isArray(val)) return val as T[];
+  if (val && typeof val === "object") {
+    const v = val as Record<string, unknown>;
+    if (Array.isArray(v.content)) return v.content as T[];
+  }
+  return [];
 }
 
-export async function updateBsmGare(
-  gareId: number,
-  data: UpdateGareDTO,
-): Promise<Gare> {
-  const res = await apiClient.patch<Gare>(API_ROUTES.gare.update(gareId), data);
-  return res.data;
+// ── STATISTIQUES ─────────────────────────────────────────────────────────────
+
+export interface BsmStatistiques {
+  gareId: string;
+  nbAgencesAffiliees: number;
+  nbAgencesActives: number;
+  nbVoyagesAujourdhui: number;
+  nbVoyagesAVenir: number;
+  tauxRemplissageMoyen: number;
 }
 
-// ─── Agences affiliées ────────────────────────────────────────────────────────
-
-export async function getAgencesAffiliees(
-  gareId: number,
-): Promise<AgenceVoyageFull[]> {
-  const res = await apiClient.get<AgenceVoyageFull[]>(
-    API_ROUTES.gare.agences(gareId),
-  );
-  return Array.isArray(res.data) ? res.data : [];
+export async function getBsmStatistiques(
+  gareId: number | string,
+): Promise<BsmStatistiques | null> {
+  try {
+    const res = await apiClient.get(`/bsm/statistiques/${gareId}`);
+    return res.data as BsmStatistiques;
+  } catch {
+    console.error("[bsm-service] GET /bsm/statistiques failed");
+    return null;
+  }
 }
 
-export async function updateStatutAgence(
-  agencyId: string,
-  statut: "ACTIVE" | "SUSPENDUE" | "EN_ATTENTE_VALIDATION",
-): Promise<AgenceVoyageFull> {
-  const res = await apiClient.patch<AgenceVoyageFull>(
-    API_ROUTES.agence.updateStatut(agencyId),
-    { statutAgence: statut },
-  );
-  return res.data;
+// ── PROFIL BSM ────────────────────────────────────────────────────────────────
+
+function normalizeBsmCompte(raw: Record<string, unknown>): BsmCompte {
+  return {
+    idCompte: String(raw.idCompte ?? raw.id ?? ""),
+    gareId: Number(raw.gareId ?? 0),
+    userId: String(raw.userId ?? ""),
+    nom: String(raw.nom ?? raw.name ?? ""),
+    email: String(raw.email ?? ""),
+    telephone: String(raw.telephone ?? raw.phone ?? ""),
+    role: "BSM",
+    derniereConnexion: raw.derniereConnexion
+      ? String(raw.derniereConnexion)
+      : undefined,
+  };
 }
-
-// ─── Taxes d'affiliation ──────────────────────────────────────────────────────
-
-export async function getTaxesAffiliation(
-  gareId: number,
-): Promise<TaxeAffiliation[]> {
-  const res = await apiClient.get<TaxeAffiliation[]>(
-    API_ROUTES.bsm.affiliationTaxByGare(gareId),
-  );
-  return Array.isArray(res.data) ? res.data : [];
-}
-
-export async function updateStatutTaxe(
-  taxeId: string,
-  data: UpdateTaxeStatutDTO,
-): Promise<TaxeAffiliation> {
-  const res = await apiClient.patch<TaxeAffiliation>(
-    `/affiliation-tax/${taxeId}`,
-    data,
-  );
-  return res.data;
-}
-
-// ─── Politiques de la gare ────────────────────────────────────────────────────
-
-export async function getPolitiquesGare(
-  gareId: number,
-): Promise<PolitiqueGare[]> {
-  const res = await apiClient.get<PolitiqueGare[]>(
-    API_ROUTES.bsm.politiqueByGare(gareId),
-  );
-  return Array.isArray(res.data) ? res.data : [];
-}
-
-export async function createPolitiqueGare(
-  data: CreatePolitiqueDTO,
-): Promise<PolitiqueGare> {
-  const res = await apiClient.post<PolitiqueGare>("/politique-gare", data);
-  return res.data;
-}
-
-export async function updatePolitiqueGare(
-  id: string,
-  data: UpdatePolitiqueDTO,
-): Promise<PolitiqueGare> {
-  const res = await apiClient.patch<PolitiqueGare>(
-    API_ROUTES.bsm.politiqueById(id),
-    data,
-  );
-  return res.data;
-}
-
-export async function deletePolitiqueGare(id: string): Promise<void> {
-  await apiClient.delete(API_ROUTES.bsm.politiqueById(id));
-}
-
-// ─── Alertes ──────────────────────────────────────────────────────────────────
-
-export async function getAlertesGare(gareId: number): Promise<AlerteAgence[]> {
-  const res = await apiClient.get<AlerteAgence[]>(
-    API_ROUTES.bsm.alerteByGare(gareId),
-  );
-  return Array.isArray(res.data) ? res.data : [];
-}
-
-export async function envoyerAlerte(
-  data: CreateAlerteDTO,
-): Promise<AlerteAgence> {
-  const res = await apiClient.post<AlerteAgence>(
-    API_ROUTES.bsm.createAlerte,
-    data,
-  );
-  return res.data;
-}
-
-// ─── Compte BSM ───────────────────────────────────────────────────────────────
 
 export async function getBsmCompte(): Promise<BsmCompte | null> {
-  const res = await apiClient.get<BsmCompte[]>(API_ROUTES.bsm.profil);
-  const list = Array.isArray(res.data) ? res.data : [res.data];
-  return list[0] ?? null;
+  try {
+    const res = await apiClient.get("/bsm/profil");
+    const data = res.data;
+    // Le backend peut retourner un objet ou un tableau
+    const raw = Array.isArray(data) ? data[0] : data;
+    if (!raw) return null;
+    return normalizeBsmCompte(raw as Record<string, unknown>);
+  } catch {
+    console.error("[bsm-service] GET /bsm/profil failed");
+    return null;
+  }
 }
 
 export async function updateBsmCompte(
   data: UpdateBsmCompteDTO,
 ): Promise<BsmCompte> {
-  const compte = await getBsmCompte();
-  if (!compte) throw new Error("Compte BSM introuvable");
-  const res = await apiClient.patch<BsmCompte>(`/bsm/${compte.idCompte}`, data);
-  return res.data;
+  const res = await apiClient.put("/bsm/profil", data);
+  return normalizeBsmCompte(res.data as Record<string, unknown>);
+}
+
+// ── GARE ──────────────────────────────────────────────────────────────────────
+
+export async function getBsmGare(
+  gareId: number | string,
+): Promise<Gare | null> {
+  try {
+    const res = await apiClient.get(`/gare/${gareId}`);
+    return res.data as Gare;
+  } catch {
+    console.error("[bsm-service] GET /gare/{id} failed");
+    return null;
+  }
+}
+
+export async function updateBsmGare(
+  gareId: number | string,
+  data: UpdateGareDTO,
+): Promise<Gare> {
+  const res = await apiClient.put(`/gare/${gareId}`, data);
+  return res.data as Gare;
+}
+
+// ── AGENCES AFFILIÉES ─────────────────────────────────────────────────────────
+
+export async function getAgencesAffiliees(
+  gareId: number | string,
+): Promise<AgenceVoyageFull[]> {
+  try {
+    const res = await apiClient.get(`/gare/${gareId}/agences`);
+    return toArray<AgenceVoyageFull>(res.data);
+  } catch {
+    console.error("[bsm-service] GET /gare/{id}/agences failed");
+    return [];
+  }
+}
+
+/**
+ * Suspendre ou réactiver une agence.
+ * ⚠️ Endpoint à confirmer avec le backend :
+ *    BSM_OPERATIONS.md → PUT /bsm/agence/{agenceId}/statut
+ *    ETAPE_2           → PUT /agence/{id}/statut
+ * On utilise la version BSM_OPERATIONS (préfixe /bsm) qui est plus précise.
+ */
+export async function updateStatutAgence(
+  agenceId: string,
+  statut: StatutAgence,
+  motif?: string,
+): Promise<void> {
+  await apiClient.put(`/bsm/agence/${agenceId}/statut`, {
+    active: statut === "ACTIVE",
+    motif: motif ?? "",
+  });
+}
+
+// ── TAXES D'AFFILIATION ───────────────────────────────────────────────────────
+
+function normalizeTaxe(raw: Record<string, unknown>): TaxeAffiliation {
+  return {
+    idTaxe: String(raw.idTaxe ?? raw.id ?? ""),
+    agenceVoyageId: String(raw.agenceVoyageId ?? ""),
+    gareId: Number(raw.gareId ?? raw.gareRoutiereId ?? 0),
+    montant: Number(raw.montant ?? raw.montantFixe ?? 0),
+    dateEcheance: raw.dateEcheance ? String(raw.dateEcheance) : "",
+    datePaiement: raw.datePaiement ? String(raw.datePaiement) : null,
+    statutPaiement:
+      (raw.statutPaiement as TaxeAffiliation["statutPaiement"]) ?? "EN_ATTENTE",
+    periode: String(raw.periode ?? ""),
+  };
+}
+
+export async function getTaxesAffiliation(
+  gareId: number | string,
+): Promise<TaxeAffiliation[]> {
+  try {
+    const res = await apiClient.get(`/taxe-affiliation/gare/${gareId}`);
+    return toArray<Record<string, unknown>>(res.data).map(normalizeTaxe);
+  } catch {
+    console.error("[bsm-service] GET /taxe-affiliation/gare failed");
+    return [];
+  }
+}
+
+export async function creerTaxeAffiliation(payload: {
+  gareId: number;
+  agenceVoyageId: string;
+  montant: number;
+  dateEcheance: string;
+  periode: string;
+}): Promise<TaxeAffiliation> {
+  const res = await apiClient.post("/taxe-affiliation", payload);
+  return normalizeTaxe(res.data as Record<string, unknown>);
+}
+
+export async function marquerTaxePayee(taxeId: string): Promise<void> {
+  await apiClient.put(`/taxe-affiliation/${taxeId}/statut`, {
+    statutPaiement: "PAYE",
+  });
+}
+
+// ── POLITIQUES DE GARE ────────────────────────────────────────────────────────
+
+function normalizePolitique(raw: Record<string, unknown>): PolitiqueGare {
+  return {
+    idPolitique: String(raw.idPolitique ?? raw.id ?? ""),
+    gareId: Number(raw.gareId ?? raw.gareRoutiereId ?? 0),
+    titre: String(raw.titre ?? raw.title ?? ""),
+    description: String(raw.description ?? ""),
+    categorie: (raw.categorie as PolitiqueGare["categorie"]) ?? "POLITIQUE",
+    montant: raw.montant != null ? Number(raw.montant) : null,
+    dateEffet: String(raw.dateEffet ?? raw.effectiveDate ?? ""),
+    documentUrl: raw.documentUrl ? String(raw.documentUrl) : null,
+  };
+}
+
+export async function getPolitiquesGare(
+  gareId: number | string,
+): Promise<PolitiqueGare[]> {
+  try {
+    const res = await apiClient.get(`/politique-gare/gare/${gareId}`);
+    return toArray<Record<string, unknown>>(res.data).map(normalizePolitique);
+  } catch {
+    console.error("[bsm-service] GET /politique-gare/gare failed");
+    return [];
+  }
+}
+
+export async function creerPolitiqueGare(
+  payload: CreatePolitiqueDTO,
+): Promise<PolitiqueGare> {
+  const res = await apiClient.post("/politique-gare", payload);
+  return normalizePolitique(res.data as Record<string, unknown>);
+}
+
+export async function updatePolitiqueGare(
+  id: string,
+  payload: UpdatePolitiqueDTO,
+): Promise<PolitiqueGare> {
+  const res = await apiClient.put(`/politique-gare/${id}`, payload);
+  return normalizePolitique(res.data as Record<string, unknown>);
+}
+
+export async function supprimerPolitiqueGare(id: string): Promise<void> {
+  await apiClient.delete(`/politique-gare/${id}`);
+}
+
+// ── ALERTES ───────────────────────────────────────────────────────────────────
+
+function normalizeAlerte(raw: Record<string, unknown>): AlerteAgence {
+  return {
+    idAlerte: String(raw.idAlerte ?? raw.id ?? ""),
+    agenceVoyageId: String(raw.agenceVoyageId ?? raw.agenceId ?? ""),
+    gareId: Number(raw.gareId ?? 0),
+    type: (raw.type ?? raw.typeAlerte) as AlerteAgence["type"],
+    message: String(raw.message ?? ""),
+    dateEnvoi: String(raw.dateEnvoi ?? new Date().toISOString()),
+    envoyePar: String(raw.envoyePar ?? "BSM"),
+    lu: Boolean(raw.lu ?? false),
+  };
+}
+
+/**
+ * Historique des alertes envoyées depuis une gare.
+ * ⚠️ ETAPE_2 dit GET /alerte/gare/{gareId} — on utilise cet endpoint.
+ *    La todolist mentionne /alerte-agence/gare/{gareId} — à confirmer.
+ */
+export async function getAlertesGare(
+  gareId: number | string,
+): Promise<AlerteAgence[]> {
+  try {
+    const res = await apiClient.get(`/alerte/gare/${gareId}`);
+    return toArray<Record<string, unknown>>(res.data).map(normalizeAlerte);
+  } catch {
+    console.error("[bsm-service] GET /alerte/gare failed");
+    return [];
+  }
+}
+
+export async function envoyerAlerte(
+  payload: CreateAlerteDTO,
+): Promise<AlerteAgence> {
+  const res = await apiClient.post("/alerte", {
+    agenceId: payload.agenceVoyageId,
+    message: payload.message,
+    typeAlerte: payload.type,
+  });
+  return normalizeAlerte(res.data as Record<string, unknown>);
 }
