@@ -46,6 +46,12 @@ export type UpdateTaxeStatutDTO = {
   datePaiement?: string;
 };
 
+export interface CreateTaxeDTO {
+  gareRoutiereId: number | string;
+  nomTaxe: string;
+  montantFixe: number;
+}
+
 // ── Politique de gare ─────────────────────────────────────────────────────────
 
 export type CategoriePolitique =
@@ -102,7 +108,7 @@ export interface AlerteAgence {
 
 export interface CreateAlerteDTO {
   agenceVoyageId: string;
-  gareId: number;
+  gareId: string | number;
   type: TypeAlerte;
   message: string;
   envoyePar: string;
@@ -117,8 +123,9 @@ export interface CreateAlerteDTO {
  */
 export interface BsmCompte {
   idCompte: string;
-  gareId: number;
+  gareId: string | number;
   userId: string;
+  username?: string;
   nom: string;
   email: string;
   telephone: string;

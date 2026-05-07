@@ -274,7 +274,7 @@ export default function BsmDashboardPage() {
                       </div>
                     )}
                     <div>
-                      <p className="text-sm font-medium text-slate-700 truncate max-w-[140px]">
+                      <p className="text-sm font-medium text-slate-700 truncate max-w-35">
                         {agence.shortName ?? agence.longName}
                       </p>
                     </div>

@@ -19,6 +19,7 @@ function useBusStationProvider()
     const [isCustomerAuthenticated, setIsCustomerAuthenticated] = useState<boolean>(false);
     const [isAgencyConnected, setIsAgencyConnected] = useState<boolean>(false);
     const [isOrganizationConnected, setIsOrganizationConnected] = useState<boolean>(false);
+    const [isBsmConnected, setIsBsmConnected] = useState<boolean>(false);
 
     const { register, handleSubmit, formState: { errors } } = useForm<LoginSchemaType>({
         resolver: zodResolver(loginSchema),
@@ -49,7 +50,8 @@ function useBusStationProvider()
                 setUserData(result);
                 saveAuthParams(result.token);
 
-                if (result.role.includes("AGENCE_VOYAGE")) setIsAgencyConnected(true);
+                if (result.role.includes("BUS_STATION_MANAGER")) setIsBsmConnected(true);
+                else if (result.role.includes("AGENCE_VOYAGE")) setIsAgencyConnected(true);
                 else if (result.role.includes("ORGANISATION")) {
                     setIsAgencyConnected(true);
                     setIsOrganizationConnected(true);
@@ -90,7 +92,8 @@ function useBusStationProvider()
             const result = await getConnectedUser(token);
             if (result) {
                 setUserData(result);
-                if (result.role.includes("AGENCE_VOYAGE")) setIsAgencyConnected(true);
+                if (result.role.includes("BUS_STATION_MANAGER")) setIsBsmConnected(true);
+                else if (result.role.includes("AGENCE_VOYAGE")) setIsAgencyConnected(true);
                 else if (result.role.includes("ORGANISATION")) setIsOrganizationConnected(true);
                 else setIsCustomerAuthenticated(true);
             } else {
@@ -116,11 +119,12 @@ function useBusStationProvider()
         isCustomerAuthenticated,
         isAgencyConnected,
         isOrganizationConnected,
+        isBsmConnected,
         logout,
         login,
         handleSubmit,
         register,
-    }), [isLoading, userData, axiosErrors, errors, isCustomerAuthenticated, isAgencyConnected, isOrganizationConnected]);
+    }), [isLoading, userData, axiosErrors, errors, isCustomerAuthenticated, isAgencyConnected, isOrganizationConnected, isBsmConnected]);
 
     return {authMethods};
 }

@@ -68,13 +68,31 @@ export async function getBsmStatistiques(
 // ── PROFIL BSM ────────────────────────────────────────────────────────────────
 
 function normalizeBsmCompte(raw: Record<string, unknown>): BsmCompte {
+  // Le backend peut nommer l'ID de la gare de plusieurs façons
+  const rawGareId =
+    raw.gareId ??
+    raw.gareRoutiereId ??
+    raw.idGare ??
+    raw.stationId ??
+    raw.busStationId ??
+    null;
+
+  // Accepter UUID (string) ou entier
+  const gareId =
+    rawGareId === null || rawGareId === undefined
+      ? 0
+      : typeof rawGareId === "string" && isNaN(Number(rawGareId))
+        ? (rawGareId as unknown as number) // UUID conservé tel quel
+        : Number(rawGareId);
+
   return {
     idCompte: String(raw.idCompte ?? raw.id ?? ""),
-    gareId: Number(raw.gareId ?? 0),
+    gareId,
     userId: String(raw.userId ?? ""),
-    nom: String(raw.nom ?? raw.name ?? ""),
+    username: raw.username ? String(raw.username) : undefined,
+    nom: String(raw.nom ?? raw.first_name ?? raw.name ?? ""),
     email: String(raw.email ?? ""),
-    telephone: String(raw.telephone ?? raw.phone ?? ""),
+    telephone: String(raw.telephone ?? raw.phone_number ?? raw.phone ?? ""),
     role: "BSM",
     derniereConnexion: raw.derniereConnexion
       ? String(raw.derniereConnexion)
@@ -86,9 +104,9 @@ export async function getBsmCompte(): Promise<BsmCompte | null> {
   try {
     const res = await apiClient.get("/bsm/profil");
     const data = res.data;
-    // Le backend peut retourner un objet ou un tableau
     const raw = Array.isArray(data) ? data[0] : data;
     if (!raw) return null;
+    console.log("[bsm-service] /bsm/profil raw response:", JSON.stringify(raw, null, 2));
     return normalizeBsmCompte(raw as Record<string, unknown>);
   } catch {
     console.error("[bsm-service] GET /bsm/profil failed");
@@ -186,19 +204,17 @@ export async function getTaxesAffiliation(
 }
 
 export async function creerTaxeAffiliation(payload: {
-  gareId: number;
-  agenceVoyageId: string;
-  montant: number;
-  dateEcheance: string;
-  periode: string;
+  gareRoutiereId: number | string;
+  nomTaxe: string;
+  montantFixe: number;
 }): Promise<TaxeAffiliation> {
-  const res = await apiClient.post("/taxe-affiliation", payload);
+  const res = await apiClient.post("/bsm/taxe-affiliation", payload);
   return normalizeTaxe(res.data as Record<string, unknown>);
 }
 
 export async function marquerTaxePayee(taxeId: string): Promise<void> {
   await apiClient.put(`/taxe-affiliation/${taxeId}/statut`, {
-    statutPaiement: "PAYE",
+    statut: "PAYE",
   });
 }
 
@@ -232,7 +248,11 @@ export async function getPolitiquesGare(
 export async function creerPolitiqueGare(
   payload: CreatePolitiqueDTO,
 ): Promise<PolitiqueGare> {
-  const res = await apiClient.post("/politique-gare", payload);
+  const { gareId, ...rest } = payload;
+  const res = await apiClient.post("/politique-gare", {
+    gareRoutiereId: gareId,
+    ...rest,
+  });
   return normalizePolitique(res.data as Record<string, unknown>);
 }
 

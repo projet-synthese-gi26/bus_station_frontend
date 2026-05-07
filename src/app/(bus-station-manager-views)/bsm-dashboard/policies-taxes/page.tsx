@@ -26,6 +26,7 @@ import type {
   CreatePolitiqueDTO,
   TaxeAffiliation,
   CategoriePolitique,
+  CreateTaxeDTO,
 } from "@/lib/types/bsm.types";
 import type { AgenceVoyageFull } from "@/lib/types/agence.types";
 
@@ -41,10 +42,10 @@ function PolitiqueModal({
   onClose: () => void;
   onSave: (d: CreatePolitiqueDTO, id?: string) => Promise<void>;
   initial?: PolitiqueGare | null;
-  gareId: number;
+  gareId: string | number;
 }) {
   const [form, setForm] = useState<CreatePolitiqueDTO>({
-    gareId,
+    gareId: typeof gareId === "string" ? 0 : gareId,
     titre: "",
     description: "",
     categorie: "REGLEMENT",
@@ -186,6 +187,93 @@ function PolitiqueModal({
   );
 }
 
+// ── Modale création taxe ──────────────────────────────────────────────────────
+function TaxeModal({
+  isOpen,
+  onClose,
+  onSave,
+  gareRoutiereId,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+  onSave: (d: CreateTaxeDTO) => Promise<void>;
+  gareRoutiereId: number | string;
+}) {
+  const [form, setForm] = useState({ nomTaxe: "", montantFixe: "" });
+  const [saving, setSaving] = useState(false);
+
+  if (!isOpen) return null;
+  const cls =
+    "w-full px-3 py-2 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/30";
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm px-4">
+      <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm">
+        <div className="flex items-center justify-between p-5 border-b border-gray-100">
+          <h2 className="font-bold text-gray-800">Nouvelle taxe d'affiliation</h2>
+          <button onClick={onClose}>
+            <X size={18} className="text-gray-400" />
+          </button>
+        </div>
+        <div className="p-5 space-y-3">
+          <div>
+            <label className="text-xs font-semibold text-gray-500 uppercase mb-1 block">
+              Nom de la taxe *
+            </label>
+            <input
+              value={form.nomTaxe}
+              onChange={(e) => setForm((p) => ({ ...p, nomTaxe: e.target.value }))}
+              placeholder="ex: Taxe mensuelle d'occupation"
+              className={cls}
+            />
+          </div>
+          <div>
+            <label className="text-xs font-semibold text-gray-500 uppercase mb-1 block">
+              Montant fixe (FCFA) *
+            </label>
+            <input
+              type="number"
+              value={form.montantFixe}
+              onChange={(e) => setForm((p) => ({ ...p, montantFixe: e.target.value }))}
+              placeholder="ex: 50000"
+              className={cls}
+            />
+          </div>
+        </div>
+        <div className="flex justify-end gap-3 p-5 border-t border-gray-100">
+          <button
+            onClick={onClose}
+            className="px-4 py-2 text-sm text-gray-600 border border-gray-200 rounded-xl hover:bg-gray-50"
+          >
+            Annuler
+          </button>
+          <button
+            onClick={async () => {
+              if (!form.nomTaxe || !form.montantFixe) return;
+              setSaving(true);
+              try {
+                await onSave({
+                  gareRoutiereId,
+                  nomTaxe: form.nomTaxe,
+                  montantFixe: Number(form.montantFixe),
+                });
+                setForm({ nomTaxe: "", montantFixe: "" });
+                onClose();
+              } finally {
+                setSaving(false);
+              }
+            }}
+            disabled={saving || !form.nomTaxe || !form.montantFixe}
+            className="flex items-center gap-2 px-4 py-2 text-sm text-white bg-primary rounded-xl hover:bg-primary/90 disabled:opacity-60"
+          >
+            <Save size={15} /> {saving ? "..." : "Créer"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 const CAT_COLOR: Record<CategoriePolitique, string> = {
   POLITIQUE: "bg-blue-50 text-blue-700",
   TAXE: "bg-orange-50 text-orange-700",
@@ -202,6 +290,7 @@ export default function PoliciesTaxesPage() {
     savePolitique,
     supprimerPolitique,
     marquerTaxePayee,
+    creerTaxe,
     gareId,
   } = useBsm();
   const [tab, setTab] = useState<"politiques" | "taxes">("politiques");
@@ -209,6 +298,7 @@ export default function PoliciesTaxesPage() {
     open: boolean;
     initial?: PolitiqueGare;
   }>({ open: false });
+  const [taxeModal, setTaxeModal] = useState(false);
   const [expanded, setExpanded] = useState<string | null>(null);
 
   if (isLoading)
@@ -321,7 +411,13 @@ export default function PoliciesTaxesPage() {
       )}
 
       {tab === "taxes" && (
-        <div className="space-y-3">
+        <div className="space-y-4">
+          <button
+            onClick={() => setTaxeModal(true)}
+            className="flex items-center gap-2 px-4 py-2 text-sm text-white bg-primary rounded-xl hover:bg-primary/90 transition"
+          >
+            <Plus size={15} /> Ajouter une taxe
+          </button>
           {taxes.length === 0 ? (
             <p className="text-center text-gray-400 text-sm py-10">
               Aucune taxe enregistrée.
@@ -394,6 +490,13 @@ export default function PoliciesTaxesPage() {
         onSave={savePolitique}
         initial={modal.initial}
         gareId={gareId ?? 1}
+      />
+
+      <TaxeModal
+        isOpen={taxeModal}
+        onClose={() => setTaxeModal(false)}
+        onSave={creerTaxe}
+        gareRoutiereId={gareId ?? 1}
       />
     </div>
   );

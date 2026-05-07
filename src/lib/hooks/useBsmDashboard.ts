@@ -25,6 +25,7 @@ import {
   updateStatutAgence,
   envoyerAlerte,
   marquerTaxePayee as marquerTaxePayeeService,
+  creerTaxeAffiliation,
   creerPolitiqueGare,
   updatePolitiqueGare,
   supprimerPolitiqueGare,
@@ -42,7 +43,9 @@ import type {
   CreateAlerteDTO,
   CreatePolitiqueDTO,
   UpdatePolitiqueDTO,
+  CreateTaxeDTO,
 } from "@/lib/types/bsm.types";
+import { getGares } from "@/lib/services/gare-service";
 
 export function useBsmDashboard() {
   // ── État principal ────────────────────────────────────────────────────────
@@ -55,7 +58,7 @@ export function useBsmDashboard() {
   const [statistiques, setStatistiques] = useState<BsmStatistiques | null>(
     null,
   );
-  const [gareId, setGareId] = useState<number | null>(null);
+  const [gareId, setGareId] = useState<string | number | null>(null);
 
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -101,7 +104,44 @@ export function useBsmDashboard() {
         return;
       }
       setCompte(bsmCompte);
-      const gid = bsmCompte.gareId;
+      let gid: number | string = bsmCompte.gareId;
+
+      if (!gid || gid === 0) {
+        const toutesLesGares = await getGares({ size: 100 });
+
+        let gareMatch = toutesLesGares.find(
+          (g) => g.managerId === bsmCompte.userId,
+        );
+
+        if (!gareMatch && bsmCompte.username) {
+          const code = bsmCompte.username.replace(/^bsm_/i, "").toLowerCase();
+          gareMatch = toutesLesGares.find((g) =>
+            g.nom.toLowerCase().includes(code),
+          );
+        }
+
+        if (!gareMatch && bsmCompte.email) {
+          const domainCode = bsmCompte.email
+            .split("@")[1]
+            ?.split(".")[0]
+            ?.replace(/^gare-/i, "")
+            .toLowerCase();
+          if (domainCode) {
+            gareMatch = toutesLesGares.find((g) =>
+              g.nom.toLowerCase().includes(domainCode),
+            );
+          }
+        }
+
+        if (gareMatch) {
+          gid = gareMatch.idGare;
+          console.log("[useBsmDashboard] gare résolue:", gareMatch.nom, "→", gid);
+        } else {
+          setError("Aucune gare associée à ce compte BSM.");
+          setIsLoading(false);
+          return;
+        }
+      }
       setGareId(gid);
 
       // 2. Charger toutes les données en parallèle
@@ -210,6 +250,19 @@ export function useBsmDashboard() {
     }
   }, []);
 
+  // ── Actions Taxes ─────────────────────────────────────────────────────────
+  const creerTaxe = useCallback(async (data: CreateTaxeDTO) => {
+    const tid = toast.loading("Création de la taxe...");
+    try {
+      const taxe = await creerTaxeAffiliation(data);
+      setTaxes((prev) => [taxe, ...prev]);
+      toast.success("Taxe créée !", { id: tid });
+    } catch {
+      toast.error("Erreur lors de la création.", { id: tid });
+      throw new Error("creerTaxe failed");
+    }
+  }, []);
+
   // ── Actions Politiques ────────────────────────────────────────────────────
   const savePolitique = useCallback(
     async (
@@ -285,6 +338,7 @@ export function useBsmDashboard() {
     toggleStatutAgence,
     sendAlerte,
     marquerTaxePayee,
+    creerTaxe,
     savePolitique,
     supprimerPolitique,
     saveCompte,

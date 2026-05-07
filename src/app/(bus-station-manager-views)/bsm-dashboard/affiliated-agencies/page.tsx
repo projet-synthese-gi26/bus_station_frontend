@@ -150,7 +150,7 @@ function AgenceRow({
       }`}
     >
       {/* Logo */}
-      <div className="w-10 h-10 rounded-lg bg-gray-100 overflow-hidden flex-shrink-0">
+      <div className="w-10 h-10 rounded-lg bg-gray-100 overflow-hidden shrink-0">
         {agence.logoUrl ? (
           <Image
             src={agence.logoUrl}
@@ -187,7 +187,7 @@ function AgenceRow({
       </div>
 
       {/* Taxe due */}
-      <div className="text-right hidden sm:block flex-shrink-0">
+      <div className="text-right hidden sm:block shrink-0">
         {montantDu > 0 ? (
           <p className="text-sm font-semibold text-orange-600">
             {montantDu.toLocaleString("fr-FR")} FCFA

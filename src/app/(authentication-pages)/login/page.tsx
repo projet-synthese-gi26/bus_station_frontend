@@ -36,7 +36,9 @@ export default function LoginPage(): JSX.Element {
     const handleLoginSubmit = async (data: LoginSchemaType) => {
         const userRoles = await login(data);
         if (userRoles) {
-            if  (userRoles.includes("ORGANISATION") || userRoles.includes("AGENCE_VOYAGE")) {
+            if (userRoles.includes("BUS_STATION_MANAGER")) {
+                router.push('/bsm-dashboard');          // ← NOUVEAU
+            } else if (userRoles.includes("ORGANISATION") || userRoles.includes("AGENCE_VOYAGE")) {
                 navigation.onGoToDashboard();
             } else if (userRoles.includes("USAGER")) {
                 navigation.onGoToMarketPlace();
@@ -47,7 +49,7 @@ export default function LoginPage(): JSX.Element {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white flex flex-col justify-center items-center p-4 md:p-8">
+        <div className="min-h-screen bg-linear-to-br from-blue-50 to-white flex flex-col justify-center items-center p-4 md:p-8">
             <AnimateCircle />
             <motion.div
                 initial={{ opacity: 0, y: 20 }}

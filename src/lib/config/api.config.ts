@@ -8,8 +8,9 @@
  */
 
 export const API_BASE_URL =
-  process.env.NEXT_PUBLIC_TRIP_AGENCY_BACKEND_API_URL ??
-  "http://localhost:8080";
+  typeof window !== "undefined"
+    ? (process.env.NEXT_PUBLIC_PROXY_URL_TRIP_AGENCY ?? "/trip-agency")
+    : (process.env.NEXT_PUBLIC_TRIP_AGENCY_BACKEND_API_URL ?? "http://localhost:8080");
 
 /**
  * Préfixes de routes organisés par domaine.
