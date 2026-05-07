@@ -13,6 +13,10 @@ interface UsePlannerTripsReturn {
 
 /**
  * Custom hook to fetch and manage planner trips for a specific agency.
+ *
+ * BLOC 4 : la signature est inchangée mais en interne le service appelle
+ * désormais le vrai backend `/ligne-service` (et plus le mock JSON-server).
+ *
  * @param agencyId - The ID of the agency.
  * @returns An object containing the trips, loading state, and error state.
  */
@@ -22,7 +26,6 @@ export const usePlannerTrips = (agencyId: string): UsePlannerTripsReturn => {
   const [error, setError] = useState<string | null>(null);
 
   const fetchTrips = useCallback(async () => {
-    // Do not fetch if agencyId is not provided
     if (!agencyId) {
       setIsLoading(false);
       return;
@@ -48,3 +51,4 @@ export const usePlannerTrips = (agencyId: string): UsePlannerTripsReturn => {
 
   return { trips, isLoading, error, refetch: fetchTrips };
 };
+// END OF FILE: src/lib/hooks/agency-public-hooks/usePlannerTrips.ts

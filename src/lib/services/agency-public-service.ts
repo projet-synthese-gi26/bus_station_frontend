@@ -4,150 +4,304 @@ import { TravelAgency } from "@/lib/types/models/Agency";
 import { Trip } from "@/lib/types/models/Trip";
 
 // =========================================================================
-// CONFIGURATION URL (MODE DEV JSON-SERVER)
+// Service Agence — vue publique (catalogue + profil + voyages)
+// Backend : https://traefikdev.yowyob.com/bus-station
+// Endpoints :
+//   - GET    /agence                      → Page<AgenceVoyageResponseDTO>
+//   - GET    /agence/{id}                 → AgenceVoyageResponseDTO
+//   - PATCH  /agence/{id}                 → AgenceVoyageDTO (snake_case)
+//   - GET    /voyage/agence/{id}/public   → Page<VoyagePreviewDTO>
 // =========================================================================
-const URL_AGENCES = "http://localhost:3001/agences";
-const URL_DEPARTS = "http://localhost:3001/departs";
-// =========================================================================
+
+const PLACEHOLDER = "/placeholder.svg";
+
+// ----------------- Types bruts backend -----------------------------------
+
+interface AgenceVoyageResponseRaw {
+  id: string;
+  organisationId: string | null;
+  userId: string | null;
+  longName: string;
+  shortName: string;
+  logoUrl: string | null;
+  location: string | null;
+  socialNetwork: string | null;
+  description: string | null;
+  greetingMessage: string | null;
+  rating?: number;
+  specialties?: string[];
+  contact?: { email: string; phone: string; website: string } | null;
+  gareIds?: string[];
+  isActive?: boolean;
+  moyensPaiement?: string[];
+}
+
+interface VoyagePreviewDTORaw {
+  idVoyage: string;
+  nomAgence: string | null;
+  lieuDepart: string | null;
+  lieuArrive: string | null;
+  nbrPlaceRestante: number | null;
+  nbrPlaceReservable: number | null;
+  dateDepartPrev: string | null;
+  dureeVoyage: string | null;
+  nomClasseVoyage: string | null;
+  prix: number | null;
+  smallImage: string | null;
+  bigImage: string | null;
+  amenities: string[] | null;
+  statusVoyage: string | null;
+}
+
+interface SpringPage<T> {
+  content: T[];
+  totalElements?: number;
+  totalPages?: number;
+  number?: number;
+  size?: number;
+  last?: boolean;
+}
+
+// Type union pour la réponse "voyages publics" (parfois Array, parfois Page).
+type VoyagesPublicResponse =
+  | SpringPage<VoyagePreviewDTORaw>
+  | VoyagePreviewDTORaw[];
+
+// ----------------- Helpers ----------------------------------------------
+
+function formatIsoDuration(iso: string | null): string {
+  if (!iso) return "";
+  const h = parseInt(iso.match(/(\d+)H/)?.[1] ?? "0", 10);
+  const m = parseInt(iso.match(/(\d+)M/)?.[1] ?? "0", 10);
+  if (h > 0 && m > 0) return `${h}h ${m}min`;
+  if (h > 0) return `${h}h`;
+  if (m > 0) return `${m}min`;
+  return "";
+}
+
+// ----------------- Mappers -----------------------------------------------
+
+function mapResponseToTravelAgency(raw: AgenceVoyageResponseRaw): TravelAgency {
+  return {
+    agencyId: raw.id,
+    id: raw.id,
+    organisationId: raw.organisationId ?? "",
+    userId: raw.userId ?? "",
+    longName: raw.longName ?? "",
+    shortName: raw.shortName ?? "",
+    location: raw.location ?? "",
+    socialNetwork: raw.socialNetwork ?? "",
+    description: raw.description ?? "",
+    greetingMessage: raw.greetingMessage ?? "",
+    logoUrl: raw.logoUrl || PLACEHOLDER,
+    rating: raw.rating ?? 0,
+    specialties: raw.specialties ?? [],
+    contact: raw.contact ?? { email: "", phone: "", website: "" },
+    gareIds: raw.gareIds ?? [],
+  };
+}
+
+function mapPreviewToTrip(raw: VoyagePreviewDTORaw): Trip {
+  const dateDepart = raw.dateDepartPrev ?? "";
+  let heureDepart = "";
+  if (dateDepart) {
+    const d = new Date(dateDepart);
+    if (!isNaN(d.getTime())) {
+      heureDepart = d.toLocaleTimeString("fr-FR", {
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+    }
+  }
+  const validStatuts = [
+    "PUBLIE",
+    "EN_COURS",
+    "EN_ATTENTE",
+    "TERMINE",
+    "ANNULE",
+  ] as const;
+  type Statut = (typeof validStatuts)[number];
+  const statut: Statut = (validStatuts as readonly string[]).includes(
+    raw.statusVoyage ?? "",
+  )
+    ? (raw.statusVoyage as Statut)
+    : "PUBLIE";
+
+  return {
+    idVoyage: raw.idVoyage,
+    titre: `${raw.lieuDepart ?? ""} → ${raw.lieuArrive ?? ""}`,
+    description: "",
+    dateDepartPrev: dateDepart,
+    lieuDepart: raw.lieuDepart ?? "",
+    dateDepartEffectif: "",
+    dateArriveEffectif: "",
+    lieuArrive: raw.lieuArrive ?? "",
+    heureDepartEffectif: heureDepart,
+    dureeVoyage: formatIsoDuration(raw.dureeVoyage),
+    heureArrive: "",
+    nbrPlaceReservable: raw.nbrPlaceReservable ?? 0,
+    nbrPlaceRestante: raw.nbrPlaceRestante ?? 0,
+    datePublication: "",
+    dateLimiteReservation: "",
+    dateLimiteConfirmation: "",
+    statusVoyage: statut,
+    smallImage: raw.smallImage || PLACEHOLDER,
+    bigImage: raw.bigImage || PLACEHOLDER,
+    nomClasseVoyage: raw.nomClasseVoyage ?? "Standard",
+    prix: raw.prix ?? 0,
+    nomAgence: raw.nomAgence ?? "",
+    pointDeDepart: raw.lieuDepart ?? "",
+    pointArrivee: raw.lieuArrive ?? "",
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    vehicule: {} as any,
+    placeReservees: [],
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    amenities: (raw.amenities ?? []) as any,
+  };
+}
+
+// ----------------- API publiques (signatures conservées) -----------------
 
 /**
- * ADAPTATEUR: Transforme les données brutes du JSON vers ton modèle TypeScript
- * C'est ici qu'on fait correspondre 'longName' avec 'name' si besoin, etc.
- */
-const mapToUIAgency = (data: any): TravelAgency => ({
-  agencyId: data.id, // Use 'id' from the database as the agencyId
-  organisationId: data.organisationId || "",
-  userId: data.userId || "",
-  longName: data.longName || data.name || "Nom Inconnu", // Sécurité
-  shortName: data.shortName || "",
-  logoUrl: data.logoUrl || data.logo || "/placeholder.svg", // Sécurité image
-  location: data.location || "",
-  socialNetwork: data.socialNetwork || "",
-  description: data.description || "",
-  greetingMessage: data.greetingMessage || "",
-  rating: data.rating || 0,
-  specialties: data.specialties || [],
-  contact: data.contact || { email: "", phone: "", website: "" },
-  gareIds: data.gareIds || [],
-});
-
-const mapToUITrip = (data: any): Trip => ({
-  idVoyage: data.idVoyage,
-  titre: data.titre,
-  description: data.description || "",
-  dateDepartPrev: data.dateDepartPrev,
-  lieuDepart: data.lieuDepart,
-  dateDepartEffectif: data.dateDepartEffectif || "",
-  dateArriveEffectif: data.dateArriveEffectif || "",
-  lieuArrive: data.lieuArrive,
-  heureDepartEffectif: data.heureDepartEffectif || "00:00",
-  dureeVoyage: data.dureeVoyage || "",
-  heureArrive: data.heureArrive || "",
-  nbrPlaceReservable: data.nbrPlaceReservable || 0,
-  nbrPlaceRestante: data.nbrPlaceRestante || 0,
-  datePublication: data.datePublication || "",
-  dateLimiteReservation: data.dateLimiteReservation || "",
-  dateLimiteConfirmation: data.dateLimiteConfirmation || "",
-  statusVoyage: data.statusVoyage || "PUBLIE",
-  smallImage: data.smallImage || "/placeholder.svg",
-  bigImage: data.bigImage || "/placeholder.svg",
-  nomClasseVoyage: data.nomClasseVoyage || "Standard",
-  prix: data.prix || 0,
-  nomAgence: data.nomAgence || "",
-  pointDeDepart: data.pointDeDepart || "",
-  pointArrivee: data.pointArrivee || "",
-  vehicule: data.vehicule || {},
-  placeReservees: [],
-  amenities: [],
-});
-
-/**
- * Récupère une agence par son ID (agencyId)
+ * Récupère une agence publique par son ID.
  */
 export async function getPublicAgencyById(
-  id: string
+  id: string,
 ): Promise<TravelAgency | null> {
-  console.log(`🔍 [AgencyService] Recherche agence ID: ${id}`);
+  if (!id) return null;
   try {
-    const response: AxiosResponse<any> = await axiosInstance.get(
-      `${URL_AGENCES}/${id}`
-    );
-
+    const response: AxiosResponse<AgenceVoyageResponseRaw> =
+      await axiosInstance.get(`/agence/${id}`);
     if (response.status === 200 && response.data) {
-      console.log(
-        `✅ [AgencyService] Agence trouvée : ${response.data.longName}`
-      );
-      return mapToUIAgency(response.data);
+      return mapResponseToTravelAgency(response.data);
     }
-
-    console.warn(`❌ [AgencyService] Aucune agence trouvée pour ${id}`);
+    console.warn(`[agency-public-service] Aucune agence trouvée pour ${id}`);
     return null;
   } catch (error) {
-    console.error(`❌ [AgencyService] Erreur API :`, error);
+    console.error(`[agency-public-service] Erreur API :`, error);
     return null;
   }
 }
 
 /**
- * Met à jour les détails d'une agence
+ * Met à jour les informations d'une agence (PATCH /agence/{id}).
+ * Le backend attend un AgenceVoyageDTO en snake_case.
  */
 export async function updateAgencyDetails(
-    agencyId: string,
-    dataToUpdate: Partial<TravelAgency>
+  agencyId: string,
+  dataToUpdate: Partial<TravelAgency>,
 ): Promise<TravelAgency> {
-    console.log(`🔄 [AgencyService] Mise à jour de l'agence ID: ${agencyId}`);
-    try {
-        // json-server ne supporte pas PATCH avec ?agencyId=...
-        // Il faut utiliser l'URL directe avec l'ID.
-        // Assurez-vous que dans db.json, l'objet agence a bien "id": "agency-01" et non "agencyId"
-        const response: AxiosResponse<TravelAgency> = await axiosInstance.patch(
-            `${URL_AGENCES}/${agencyId}`,
-            dataToUpdate
-        );
-        console.log(`✅ [AgencyService] Agence ${agencyId} mise à jour avec succès.`);
-        return mapToUIAgency(response.data);
-    } catch (error) {
-        console.error(`❌ [AgencyService] Erreur de mise à jour pour l'agence ${agencyId}:`, error);
-        throw error; // Re-throw l'erreur pour que le hook puisse la catcher
+  if (!agencyId) {
+    throw new Error(
+      "[agency-public-service] updateAgencyDetails: agencyId requis",
+    );
+  }
+
+  const payload: Record<string, unknown> = {};
+  if (dataToUpdate.organisationId !== undefined)
+    payload.organisation_id = dataToUpdate.organisationId;
+  if (dataToUpdate.userId !== undefined) payload.user_id = dataToUpdate.userId;
+  if (dataToUpdate.longName !== undefined)
+    payload.long_name = dataToUpdate.longName;
+  if (dataToUpdate.shortName !== undefined)
+    payload.short_name = dataToUpdate.shortName;
+  if (dataToUpdate.location !== undefined)
+    payload.location = dataToUpdate.location;
+  if (dataToUpdate.socialNetwork !== undefined)
+    payload.social_network = dataToUpdate.socialNetwork;
+  if (dataToUpdate.description !== undefined)
+    payload.description = dataToUpdate.description;
+  if (dataToUpdate.greetingMessage !== undefined)
+    payload.greeting_message = dataToUpdate.greetingMessage;
+  if (
+    dataToUpdate.gareIds &&
+    Array.isArray(dataToUpdate.gareIds) &&
+    dataToUpdate.gareIds.length > 0
+  ) {
+    payload.gare_routiere_id = dataToUpdate.gareIds[0];
+  }
+
+  try {
+    const response: AxiosResponse<AgenceVoyageResponseRaw> =
+      await axiosInstance.patch(`/agence/${agencyId}`, payload);
+    if (response.status === 200 && response.data) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const data = response.data as any;
+      if (data.id) return mapResponseToTravelAgency(data);
+
+      // Fallback si le backend renvoie un AgenceVoyageDTO partiel (snake_case)
+      return {
+        agencyId,
+        id: agencyId,
+        organisationId: data.organisation_id ?? "",
+        userId: data.user_id ?? "",
+        longName: data.long_name ?? "",
+        shortName: data.short_name ?? "",
+        location: data.location ?? "",
+        socialNetwork: data.social_network ?? "",
+        description: data.description ?? "",
+        greetingMessage: data.greeting_message ?? "",
+        logoUrl: PLACEHOLDER,
+        rating: 0,
+        specialties: [],
+        contact: { email: "", phone: "", website: "" },
+        gareIds: data.gare_routiere_id ? [data.gare_routiere_id] : [],
+      };
     }
+    throw new Error(`Code HTTP inattendu : ${response.status}`);
+  } catch (error) {
+    console.error(
+      `[agency-public-service] Erreur update agence ${agencyId} :`,
+      error,
+    );
+    throw error;
+  }
 }
 
-
 /**
- * Récupère les voyages d'une agence spécifique
+ * Récupère les voyages publics d'une agence.
  */
 export async function getTripsByAgencyId(agencyId: string): Promise<Trip[]> {
+  if (!agencyId) return [];
   try {
-    // Filtrage par agencyId dans le fichier des départs
-    const response: AxiosResponse<any[]> = await axiosInstance.get(
-      `${URL_DEPARTS}?agencyId=${agencyId}`
-    );
-    if (response.status === 200) {
-      console.log(
-        `🚌 [AgencyService] ${response.data.length} voyages trouvés pour l'agence ${agencyId}`
-      );
-      return response.data.map(mapToUITrip);
+    const response: AxiosResponse<VoyagesPublicResponse> =
+      await axiosInstance.get(`/voyage/agence/${agencyId}/public`, {
+        params: { page: 0, size: 50 },
+      });
+    if (response.status === 200 && response.data) {
+      const data = response.data;
+      const content: VoyagePreviewDTORaw[] = Array.isArray(data)
+        ? data
+        : (data.content ?? []);
+      return content.map(mapPreviewToTrip);
     }
     return [];
   } catch (error) {
-    console.error(`❌ [AgencyService] Erreur récupération voyages:`, error);
+    console.error(
+      `[agency-public-service] Erreur récupération voyages agence ${agencyId} :`,
+      error,
+    );
     return [];
   }
 }
 
 /**
- * Récupère toutes les agences pour le listing
+ * Récupère toutes les agences publiques (paginé côté backend).
  */
 export async function getAllPublicAgencies(): Promise<TravelAgency[]> {
   try {
-    const response: AxiosResponse<any[]> = await axiosInstance.get(
-      `${URL_AGENCES}`
-    );
-    if (response.status === 200) {
-      return response.data.map(mapToUIAgency);
+    const response: AxiosResponse<SpringPage<AgenceVoyageResponseRaw>> =
+      await axiosInstance.get(`/agence`, { params: { page: 0, size: 100 } });
+    if (response.status === 200 && response.data) {
+      const content = response.data.content ?? [];
+      return content.map(mapResponseToTravelAgency);
     }
     return [];
   } catch (error) {
+    console.error(
+      "[agency-public-service] Erreur getAllPublicAgencies :",
+      error,
+    );
     return [];
   }
 }

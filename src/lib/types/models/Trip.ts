@@ -76,13 +76,38 @@ export interface TripAxiosResponseInterface {
   totalPages: number;
 }
 
+/**
+ * PlannerTrip — représente un créneau récurrent dans la grille hebdomadaire.
+ *
+ * BLOC 4 : `id` est désormais un UUID (string) car il représente un id_creneau backend.
+ * Des champs optionnels ont été ajoutés pour transporter les données nécessaires
+ * à la création/modification d'un créneau côté backend (lieu, ressources, etc.)
+ * sans changer la signature publique des composants WeeklySchedule.
+ */
 export interface PlannerTrip {
-  id: number;
-  agencyId: number;
+  id: string;
+  agencyId: string;
   title: string;
   dayOfWeek: number; // 1 for Monday, 7 for Sunday
   startTime: string; // "HH:mm"
   endTime: string; // "HH:mm"
   category: string;
   description?: string;
+
+  // -------- Bloc 4 — backend-related fields (optional in the front model) --------
+  /** Id du planning parent (utile pour ajouter d'autres créneaux à la même ligne). */
+  planningId?: string;
+  lieuDepart?: string;
+  lieuArrive?: string;
+  pointDeDepart?: string;
+  pointArrivee?: string;
+  /** UUID de la classe voyage backend. */
+  classVoyageId?: string;
+  /** UUID du véhicule backend. */
+  vehiculeId?: string;
+  /** UUID du chauffeur backend (chauffeurs.id, pas user_id). */
+  chauffeurId?: string;
+  /** Nombre de places disponibles pour les voyages générés depuis ce créneau. */
+  nbrPlaces?: number;
 }
+// END OF FILE: src/lib/types/models/Trip.ts
