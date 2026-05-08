@@ -55,7 +55,7 @@ function VoyageCard({ voyage }: { voyage: VoyagePreview }) {
       href={`/market-place/trip/${voyage.idVoyage}`}
       className="group block bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-xl hover:-translate-y-1 hover:border-blue-200 transition-all duration-300"
     >
-      <div className="relative h-32 bg-gradient-to-br from-blue-500 to-indigo-700 overflow-hidden">
+      <div className="relative h-32 bg-linear-to-br from-blue-500 to-indigo-700 overflow-hidden">
         {voyage.smallImage && (
           <Image
             src={voyage.smallImage}
@@ -65,7 +65,7 @@ function VoyageCard({ voyage }: { voyage: VoyagePreview }) {
             unoptimized
           />
         )}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+        <div className="absolute inset-0 bg-linear-to-t from-black/40 to-transparent" />
         {voyage.nomClasseVoyage && (
           <span className="absolute top-2 right-2 text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 bg-white/95 text-blue-700 rounded-full">
             {voyage.nomClasseVoyage}
@@ -145,7 +145,7 @@ function PaymentMethod({ moyen }: { moyen: string | MoyenPaiement }) {
   return (
     <div className="flex items-center gap-3 p-4 bg-white rounded-2xl border border-gray-100 hover:border-blue-200 hover:shadow-sm transition-all">
       <div
-        className={`w-10 h-10 rounded-xl bg-gradient-to-br ${gradient} flex items-center justify-center text-white shadow-sm`}
+        className={`w-10 h-10 rounded-xl bg-linear-to-br ${gradient} flex items-center justify-center text-white shadow-sm`}
       >
         <CreditCard className="w-5 h-5" />
       </div>
@@ -210,7 +210,7 @@ export default function AgencyDetailPage() {
   if (isLoading) {
     return (
       <div className="min-h-full -mx-4 -mt-4">
-        <div className="h-64 bg-gradient-to-br from-blue-700 to-indigo-900 animate-pulse" />
+        <div className="h-64 bg-linear-to-br from-blue-700 to-indigo-900 animate-pulse" />
         <div className="max-w-5xl mx-auto px-4 py-8 space-y-4">
           <div className="h-12 bg-gray-100 rounded-2xl animate-pulse" />
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -256,7 +256,7 @@ export default function AgencyDetailPage() {
       {/* ═══════════════════════════════════════════════════════════════════
           HEADER
       ═══════════════════════════════════════════════════════════════════ */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-blue-700 via-blue-800 to-indigo-900 px-4 pt-8 pb-24">
+      <section className="relative overflow-hidden bg-linear-to-br from-blue-700 via-blue-800 to-indigo-900 px-4 pt-8 pb-24">
         {/* Pattern décoratif */}
         <div
           className="absolute inset-0 opacity-10"

@@ -51,7 +51,7 @@ function AgenceLineCard({ agence }: { agence: AgenceVoyageFull }) {
       href={`/agency/${agence.agencyId}`}
       className="group flex items-center gap-3 p-4 bg-white rounded-2xl border border-gray-100 hover:border-blue-200 hover:shadow-sm transition-all"
     >
-      <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shrink-0 overflow-hidden">
+      <div className="w-12 h-12 rounded-xl bg-linear-to-br from-blue-500 to-indigo-600 flex items-center justify-center shrink-0 overflow-hidden">
         {agence.logoUrl ? (
           <Image
             src={agence.logoUrl}
@@ -103,7 +103,7 @@ function DepartLineCard({ voyage }: { voyage: VoyagePreview }) {
       href={`/market-place/trip/${voyage.idVoyage}`}
       className="group flex items-center gap-3 p-4 bg-white rounded-2xl border border-gray-100 hover:border-blue-200 hover:shadow-sm transition-all"
     >
-      <div className="text-center shrink-0 px-2 py-1 bg-blue-50 rounded-xl border border-blue-100 min-w-[60px]">
+      <div className="text-center shrink-0 px-2 py-1 bg-blue-50 rounded-xl border border-blue-100 min-w-15">
         <p className="font-bold text-blue-700 text-sm">{heureStr}</p>
       </div>
       <div className="min-w-0 flex-1">
@@ -172,7 +172,7 @@ export default function GareDetailPage() {
   if (isLoading) {
     return (
       <div className="min-h-full -mx-4 -mt-4">
-        <div className="h-72 bg-gradient-to-br from-slate-700 to-blue-900 animate-pulse" />
+        <div className="h-72 bg-linear-to-br from-slate-700 to-blue-900 animate-pulse" />
         <div className="max-w-5xl mx-auto px-4 py-8 space-y-4">
           <div className="h-12 bg-gray-100 rounded-2xl animate-pulse" />
           <div className="h-32 bg-gray-100 rounded-2xl animate-pulse" />
@@ -205,7 +205,7 @@ export default function GareDetailPage() {
       {/* ═══════════════════════════════════════════════════════════════════
           HEADER avec cover image
       ═══════════════════════════════════════════════════════════════════ */}
-      <section className="relative overflow-hidden h-72 bg-gradient-to-br from-slate-700 via-blue-800 to-indigo-900">
+      <section className="relative overflow-hidden h-72 bg-linear-to-br from-slate-700 via-blue-800 to-indigo-900">
         {gare.imageUrl && (
           <Image
             src={gare.imageUrl}
@@ -216,7 +216,7 @@ export default function GareDetailPage() {
           />
         )}
         {/* Overlays */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/30" />
+        <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/40 to-black/30" />
         <div
           className="absolute inset-0 opacity-10"
           style={{

@@ -1,13 +1,6 @@
 /**
  * useTripPlannerV2.ts
  * Hook principal pour P-20 — formulaire multi-étapes création/édition voyage.
- * Emplacement suggéré : src/lib/hooks/dasboard/useTripPlannerV2.ts
- *
- * Modes supportés :
- *   ?mode=new          → création brouillon vierge
- *   ?edit={voyageId}   → modification voyage existant
- *   ?draft={id}        → complétion d'un brouillon
- *   ?from-ligne={id}&date={date} → pré-rempli depuis LigneService
  */
 
 "use client";
@@ -57,50 +50,14 @@ import {
 
 export type TripPlannerMode = "new" | "edit" | "draft" | "from-ligne";
 
-export interface TripPlannerState {
-  // Identité
-  mode: TripPlannerMode;
-  agenceId: string | null;
-  currentStep: StepIndex;
-  isLastStep: boolean;
-
-  // Chargement
-  isLoadingResources: boolean;
-  isLoadingPrefill: boolean;
-  isSubmitting: boolean;
-
-  // Ressources disponibles pour les selects
-  vehicules: VehiculeOption[];
-  chauffeurs: ChauffeurOption[];
-  classes: ClassVoyageOption[];
-  gares: GareOption[];
-
-  // Labels de mode
-  pageTitle: string;
-  pageSubtitle: string;
-
-  // Erreur globale
-  globalError: string | null;
-  successMessage: string | null;
-
-  // Brouillon chargé (si mode draft)
-  brouillonId: string | null;
-  brouillonStatut: string | null;
-}
-
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
 function buildISODateTime(date: string, time: string): string {
   if (!date || !time) return "";
-  try {
-    return new Date(`${date}T${time}:00`).toISOString();
-  } catch {
-    return "";
-  }
+  const fullTime = time.length === 5 ? `${time}:00` : time;
+  return `${date}T${fullTime}`;
 }
 
-// Mappe les données backend brouillon/voyage/ligne vers le formulaire
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function mapToFormData(raw: Record<string, any>): Partial<TripPlannerFormData> {
   const dateStr = raw.dateDepartPrev
     ? new Date(raw.dateDepartPrev).toISOString().split("T")[0]
@@ -134,8 +91,6 @@ function mapToFormData(raw: Record<string, any>): Partial<TripPlannerFormData> {
   };
 }
 
-// Mappe les données LigneService vers formulaire (from-ligne mode)
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function mapLigneToFormData(
   ligne: Record<string, any>,
   dateOverride?: string,
@@ -161,28 +116,25 @@ export function useTripPlannerV2() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  // ── Lecture des query params ──────────────────────────────────────────────
   const editingId = searchParams.get("edit");
   const draftId = searchParams.get("draft");
   const fromLigneId = searchParams.get("from-ligne");
   const prefillDate = searchParams.get("date");
 
-  const mode: TripPlannerMode = editingId
-    ? "edit"
-    : draftId
-      ? "draft"
-      : fromLigneId
-        ? "from-ligne"
-        : "new";
+  const mode: TripPlannerMode = editingId ? "edit" : draftId ? "draft" : fromLigneId ? "from-ligne" : "new";
 
-  // ── États ─────────────────────────────────────────────────────────────────
+  // ── ÉTATS (Déclarations corrigées) ─────────────────────────────────────────
   const [agenceId, setAgenceId] = useState<string | null>(null);
   const [currentStep, setCurrentStep] = useState<StepIndex>(0);
   const [isLoadingResources, setIsLoadingResources] = useState(false);
   const [isLoadingPrefill, setIsLoadingPrefill] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [globalError, setGlobalError] = useState<string | null>(null);
+  
+  // Correction ici : déclaration de isSuccess et setIsSuccess
+  const [isSuccess, setIsSuccess] = useState(false); 
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [globalError, setGlobalError] = useState<string | null>(null);
+  
   const [brouillonId, setBrouillonId] = useState<string | null>(draftId);
   const [brouillonStatut, setBrouillonStatut] = useState<string | null>(null);
 
@@ -192,28 +144,24 @@ export function useTripPlannerV2() {
   const [classes, setClasses] = useState<ClassVoyageOption[]>([]);
   const [gares, setGares] = useState<GareOption[]>([]);
 
-  // ── React Hook Form ───────────────────────────────────────────────────────
   const form = useForm<TripPlannerFormData, unknown, TripPlannerFormInput>({
     resolver: zodResolver(tripPlannerSchema) as never,
     defaultValues: tripPlannerDefaults as TripPlannerFormData,
     mode: "onChange",
   });
 
-  // ── Résolution agenceId depuis userId ─────────────────────────────────────
+  const formValues = form.watch();
+
   useEffect(() => {
     if (isUserLoading || !userData?.userId) return;
     getAgencyByChefId(userData.userId)
       .then((agency) => {
         if (agency?.agencyId) setAgenceId(agency.agencyId);
-        else
-          setGlobalError(
-            "Impossible de résoudre l'agence de l'utilisateur connecté.",
-          );
+        else setGlobalError("Impossible de résoudre l'agence.");
       })
       .catch(() => setGlobalError("Erreur lors du chargement de l'agence."));
   }, [userData, isUserLoading]);
 
-  // ── Chargement des ressources (véhicules, chauffeurs, classes, gares) ─────
   useEffect(() => {
     if (!agenceId) return;
     setIsLoadingResources(true);
@@ -232,58 +180,37 @@ export function useTripPlannerV2() {
       .finally(() => setIsLoadingResources(false));
   }, [agenceId]);
 
-  // ── Pré-remplissage selon le mode ─────────────────────────────────────────
   useEffect(() => {
     if (!agenceId) return;
-
     if (mode === "edit" && editingId) {
       setIsLoadingPrefill(true);
-      getVoyageForEdit(editingId)
-        .then((data) => {
-          if (data)
-            form.reset({ ...tripPlannerDefaults, ...mapToFormData(data) });
-        })
-        .finally(() => setIsLoadingPrefill(false));
+      getVoyageForEdit(editingId).then((data) => {
+        if (data) form.reset({ ...tripPlannerDefaults, ...mapToFormData(data) });
+      }).finally(() => setIsLoadingPrefill(false));
     } else if (mode === "draft" && draftId) {
       setIsLoadingPrefill(true);
-      getBrouillonForEdit(draftId)
-        .then((data) => {
-          if (data) {
-            form.reset({ ...tripPlannerDefaults, ...mapToFormData(data) });
-            setBrouillonStatut(String(data.statutBrouillon ?? ""));
-          }
-        })
-        .finally(() => setIsLoadingPrefill(false));
+      getBrouillonForEdit(draftId).then((data) => {
+        if (data) {
+          form.reset({ ...tripPlannerDefaults, ...mapToFormData(data) });
+          setBrouillonStatut(String(data.statutBrouillon ?? ""));
+        }
+      }).finally(() => setIsLoadingPrefill(false));
     } else if (mode === "from-ligne" && fromLigneId) {
       setIsLoadingPrefill(true);
-      getLigneServiceForPrefill(fromLigneId)
-        .then((data) => {
-          if (data) {
-            form.reset({
-              ...tripPlannerDefaults,
-              ...mapLigneToFormData(data, prefillDate ?? ""),
-            });
-          }
-        })
-        .finally(() => setIsLoadingPrefill(false));
+      getLigneServiceForPrefill(fromLigneId).then((data) => {
+        if (data) form.reset({ ...tripPlannerDefaults, ...mapLigneToFormData(data, prefillDate ?? "") });
+      }).finally(() => setIsLoadingPrefill(false));
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [agenceId, mode]);
+  }, [agenceId, mode, editingId, draftId, fromLigneId, prefillDate, form]);
 
-  // ── Navigation entre étapes ───────────────────────────────────────────────
   const TOTAL_STEPS = 4;
 
   const goNext = useCallback(async () => {
     if (currentStep >= 3) return;
-    // Valider uniquement les champs de l'étape courante
-    if (currentStep < 3) {
-      const schema = stepSchemas[currentStep as 0 | 1 | 2];
-      const stepFields = Object.keys(
-        schema.shape,
-      ) as (keyof TripPlannerFormData)[];
-      const valid = await form.trigger(stepFields);
-      if (!valid) return;
-    }
+    const schema = stepSchemas[currentStep as 0 | 1 | 2];
+    const stepFields = Object.keys(schema.shape) as (keyof TripPlannerFormData)[];
+    const valid = await form.trigger(stepFields);
+    if (!valid) return;
     setCurrentStep((s) => (s + 1) as StepIndex);
   }, [currentStep, form]);
 
@@ -295,9 +222,6 @@ export function useTripPlannerV2() {
     setCurrentStep(step);
   }, []);
 
-  // ── Soumission ────────────────────────────────────────────────────────────
-
-  /** Sauvegarder en brouillon */
   const saveDraft = useCallback(async () => {
     if (!agenceId) return;
     setIsSubmitting(true);
@@ -307,35 +231,27 @@ export function useTripPlannerV2() {
     const payload: BrouillonCreateDTO = {
       agenceVoyageId: agenceId,
       titre: values.titre,
-      description: values.description,
+      description: values.description || null,
       lieuDepart: values.lieuDepart,
       lieuArrive: values.lieuArrive,
-      pointDeDepart: values.pointDeDepart,
-      pointArrivee: values.pointArrivee,
-      dateDepartPrev: values.dateDepartPrev
-        ? buildISODateTime(
-            values.dateDepartPrev,
-            values.heureDepartEffectif ?? "00:00",
-          )
-        : undefined,
-      heureDepartEffectif: values.heureDepartEffectif,
-      heureArrive: values.heureArrive,
-      dureeEstimee: values.dureeEstimee,
+      pointDeDepart: values.pointDeDepart || null,
+      pointArrivee: values.pointArrivee || null,
+      dateDepartPrev: values.dateDepartPrev ? buildISODateTime(values.dateDepartPrev, values.heureDepartEffectif || "00:00") : null,
+      heureDepartEffectif: values.heureDepartEffectif || null,
+      heureArrive: values.heureArrive || null,
+      dureeEstimee: values.dureeEstimee || null,
+      classVoyageId: values.classVoyageId || null,
       vehiculeId: values.vehiculeId || null,
       chauffeurId: values.chauffeurId || null,
-      classVoyageId: values.classVoyageId || null,
-      nbrPlaceReservable: values.nbrPlaceReservable,
-      prix: values.prix,
-      amenities: values.amenities,
+      nbrPlaceReservable: values.nbrPlaceReservable ? Number(values.nbrPlaceReservable) : null,
+      prix: values.prix ? Number(values.prix) : null,
+      amenities: values.amenities || null,
       smallImage: values.smallImage || null,
       bigImage: values.bigImage || null,
-      dateLimiteReservation: values.dateLimiteReservation
-        ? new Date(values.dateLimiteReservation).toISOString()
-        : null,
-      dateLimiteConfirmation: values.dateLimiteConfirmation
-        ? new Date(values.dateLimiteConfirmation).toISOString()
-        : null,
-      ligneServiceId: fromLigneId ?? null,
+      dateLimiteReservation: values.dateLimiteReservation ? buildISODateTime(values.dateLimiteReservation, "23:59") : null,
+      dateLimiteConfirmation: values.dateLimiteConfirmation ? buildISODateTime(values.dateLimiteConfirmation, "23:59") : null,
+      notes: values.description || null,
+      ligneServiceId: fromLigneId || null,
     };
 
     try {
@@ -345,190 +261,105 @@ export function useTripPlannerV2() {
       } else {
         result = await createBrouillon(payload);
         if (result.success && result.data) {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const newId =
-            (result.data as any).id ?? (result.data as any).idBrouillon;
+          const newId = (result.data as any).id ?? (result.data as any).idBrouillon;
           if (newId) setBrouillonId(newId);
         }
       }
-
       if (result.success) {
-        setSuccessMessage("Brouillon sauvegardé avec succès.");
-        setTimeout(() => router.push("/dashboard/drafts"), 1500);
+        setSuccessMessage("Brouillon sauvegardé avec succès !");
+        setIsSuccess(true); // Déclenche la modale de succès
+        setTimeout(() => router.push("/dashboard/drafts"), 2000);
       } else {
-        setGlobalError(result.error ?? "Erreur lors de la sauvegarde.");
+        setGlobalError(result.error ?? "Erreur de sauvegarde.");
       }
     } finally {
       setIsSubmitting(false);
     }
   }, [agenceId, form, mode, brouillonId, fromLigneId, router]);
 
-  /** Créer et publier directement */
   const createAndPublish = useCallback(async () => {
     if (!agenceId) return;
     const valid = await form.trigger();
-    if (!valid) {
-      setGlobalError("Veuillez remplir tous les champs obligatoires.");
-      return;
-    }
+    if (!valid) return;
+
     setIsSubmitting(true);
     setGlobalError(null);
     const values = form.getValues();
 
-    if (mode === "edit" && editingId) {
-      // Mode modification voyage existant
-      const result = await updateVoyage(editingId, {
-        titre: values.titre,
-        lieuDepart: values.lieuDepart,
-        lieuArrive: values.lieuArrive,
-        pointDeDepart: values.pointDeDepart,
-        pointArrivee: values.pointArrivee,
-        dateDepartPrev: buildISODateTime(
-          values.dateDepartPrev,
-          values.heureDepartEffectif,
-        ),
-        heureDepartEffectif: values.heureDepartEffectif,
-        heureArrive: values.heureArrive,
-        vehiculeId: values.vehiculeId || undefined,
-        chauffeurId: values.chauffeurId || undefined,
-        classVoyageId: values.classVoyageId || undefined,
-        nbrPlaceReservable: values.nbrPlaceReservable,
-        prix: values.prix,
-        amenities: values.amenities,
-      });
-      if (result.success) {
-        setSuccessMessage("Voyage modifié avec succès.");
-        setTimeout(() => router.push("/dashboard/marketplace"), 1500);
-      } else {
-        setGlobalError(result.error ?? "Erreur lors de la modification.");
-      }
-      setIsSubmitting(false);
-      return;
-    }
+    // On prépare les dates au format ISO Strict (Z) pour Spring Boot
+    const isoDateDepart = new Date(`${values.dateDepartPrev}T${values.heureDepartEffectif || "00:00"}:00`).toISOString();
+    const isoDateArrive = new Date(`${values.dateDepartPrev}T${values.heureArrive || "00:00"}:00`).toISOString();
 
-    if (mode === "draft" && brouillonId && brouillonStatut === "PRET") {
-      // Publier le brouillon existant
-      const result = await publierBrouillon(brouillonId);
-      if (result.success) {
-        setSuccessMessage("Voyage publié avec succès !");
-        setTimeout(() => router.push("/dashboard/marketplace"), 1500);
-      } else {
-        setGlobalError(result.error ?? "Erreur lors de la publication.");
-      }
-      setIsSubmitting(false);
-      return;
-    }
-
-    // Création directe d'un voyage publié
+    // CONSTRUCTION DU PAYLOAD STRICT (VoyageCreateRequestDTO)
     const voyagePayload: VoyageCreateDTO = {
       agenceVoyageId: agenceId,
       titre: values.titre,
+      description: values.description || "",
       lieuDepart: values.lieuDepart,
       lieuArrive: values.lieuArrive,
-      pointDeDepart: values.pointDeDepart,
-      pointArrivee: values.pointArrivee,
-      dateDepartPrev: buildISODateTime(
-        values.dateDepartPrev,
-        values.heureDepartEffectif,
-      ),
-      heureDepartEffectif: values.heureDepartEffectif,
-      heureArrive: values.heureArrive,
-      dureeEstimee: values.dureeEstimee,
-      classVoyageId: values.classVoyageId ?? "",
-      vehiculeId: values.vehiculeId ?? "",
-      chauffeurId: values.chauffeurId || null,
-      nbrPlaceReservable: values.nbrPlaceReservable,
-      prix: values.prix,
-      amenities: values.amenities,
+      pointDeDepart: values.pointDeDepart || "",
+      pointArrivee: values.pointArrivee || "",
+      dateDepartPrev: isoDateDepart,
+      heureArrive: isoDateArrive,
+      heureDepartEffectif: isoDateDepart,
+      nbrPlaceReservable: Number(values.nbrPlaceReservable),
+      nbrPlaceRestante: Number(values.nbrPlaceReservable), // Initialement égal au max
+      nbrPlaceReserve: 0,
+      nbrPlaceConfirm: 0,
+      statusVoyage: mode === "edit" ? "EN_ATTENTE" : "PUBLIE",
+      dateLimiteReservation: values.dateLimiteReservation 
+        ? new Date(`${values.dateLimiteReservation}T23:59:59`).toISOString() 
+        : isoDateDepart,
+      dateLimiteConfirmation: values.dateLimiteConfirmation 
+        ? new Date(`${values.dateLimiteConfirmation}T23:59:59`).toISOString() 
+        : isoDateDepart,
+      classVoyageId: values.classVoyageId || "", 
+      vehiculeId: values.vehiculeId || "",
+      chauffeurId: values.chauffeurId || "",
+      amenities: values.amenities || [],
       smallImage: values.smallImage || null,
       bigImage: values.bigImage || null,
-      dateLimiteReservation: values.dateLimiteReservation
-        ? new Date(values.dateLimiteReservation).toISOString()
-        : null,
-      dateLimiteConfirmation: values.dateLimiteConfirmation
-        ? new Date(values.dateLimiteConfirmation).toISOString()
-        : null,
-      description: values.description,
-      voyageBrouillonId: brouillonId,
     };
 
-    const createResult = await createVoyage(voyagePayload);
-    if (!createResult.success) {
-      setGlobalError(createResult.error ?? "Erreur lors de la création.");
+    try {
+      // Si on vient d'un brouillon, on le met d'abord à jour
+      if (mode === "draft" && brouillonId) {
+        await updateBrouillon(brouillonId, voyagePayload as any);
+      }
+
+      const result = editingId 
+        ? await updateVoyage(editingId, voyagePayload)
+        : await createVoyage(voyagePayload);
+
+      if (result.success) {
+        setSuccessMessage(editingId ? "Modification réussie !" : "Voyage publié avec succès !");
+        setIsSuccess(true);
+        
+        // Si c'est un brouillon qui devient un voyage, on le marque converti
+        if (brouillonId) {
+            await updateBrouillon(brouillonId, { statutBrouillon: "CONVERTI" } as any);
+        }
+
+        setTimeout(() => router.push("/dashboard/marketplace"), 2000);
+      } else {
+        setGlobalError(result.error || "Le serveur a refusé la création du voyage.");
+      }
+    } catch (err) {
+      setGlobalError("Erreur de communication avec le serveur.");
+    } finally {
       setIsSubmitting(false);
-      return;
     }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const newVoyageId =
-      (createResult.data as any)?.idVoyage ?? (createResult.data as any)?.id;
-    if (newVoyageId) {
-      await publierVoyage(newVoyageId);
-    }
-    setSuccessMessage("Voyage créé et publié avec succès !");
-    setTimeout(() => router.push("/dashboard/marketplace"), 1500);
-    setIsSubmitting(false);
-  }, [agenceId, form, mode, editingId, brouillonId, brouillonStatut, router]);
+  }, [agenceId, form, mode, editingId, brouillonId, router]);
 
-  // ── Labels de mode ────────────────────────────────────────────────────────
-  const pageTitle =
-    mode === "edit"
-      ? "Modifier le voyage"
-      : mode === "draft"
-        ? "Compléter le brouillon"
-        : mode === "from-ligne"
-          ? "Générer un voyage"
-          : "Planifier un nouveau voyage";
+  const pageTitle = mode === "edit" ? "Modifier le voyage" : mode === "draft" ? "Compléter le brouillon" : mode === "from-ligne" ? "Générer un voyage" : "Planifier un nouveau voyage";
+  const pageSubtitle = mode === "draft" ? "Complétez les ressources, puis publiez." : mode === "from-ligne" ? "Voyage pré-rempli depuis votre planning." : "Créez un nouveau voyage.";
 
-  const pageSubtitle =
-    mode === "draft"
-      ? "Renseignez les ressources manquantes, puis publiez ou sauvegardez."
-      : mode === "from-ligne"
-        ? "Voyage pré-rempli depuis votre planning récurrent. Choisissez la date et les ressources."
-        : mode === "edit"
-          ? "Modifiez les informations du voyage."
-          : "Créez un nouveau voyage ou sauvegardez-le en brouillon.";
-
-  const canPublish = mode !== "draft" || brouillonStatut === "PRET";
+  const canPublish = mode !== "draft" || (!!formValues.vehiculeId && !!formValues.chauffeurId && !!formValues.classVoyageId && !!formValues.prix);
 
   return {
-    // Form
-    form,
-
-    // Navigation
-    currentStep,
-    totalSteps: TOTAL_STEPS,
-    isLastStep: currentStep === TOTAL_STEPS - 1,
-    goNext,
-    goBack,
-    goToStep,
-
-    // États
-    agenceId,
-    mode,
-    isLoadingResources,
-    isLoadingPrefill,
-    isSubmitting,
-    globalError,
-    successMessage,
-    setGlobalError,
-
-    // Ressources
-    vehicules,
-    chauffeurs,
-    classes,
-    gares,
-
-    // Brouillon
-    brouillonId,
-    brouillonStatut,
-    canPublish,
-
-    // Labels
-    pageTitle,
-    pageSubtitle,
-
-    // Actions
-    saveDraft,
-    createAndPublish,
+    form, currentStep, totalSteps: TOTAL_STEPS, isLastStep: currentStep === TOTAL_STEPS - 1,
+    goNext, goBack, goToStep, agenceId, mode, isLoadingResources, isLoadingPrefill, isSubmitting,
+    isSuccess, setIsSuccess, globalError, successMessage, setGlobalError, vehicules, chauffeurs, classes, gares,
+    brouillonId, brouillonStatut, canPublish, pageTitle, pageSubtitle, saveDraft, createAndPublish,
   };
 }

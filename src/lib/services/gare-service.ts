@@ -153,7 +153,7 @@ export async function getGares(params?: {
     return toArray(res.data).map(normalizeGare);
   } catch (error) {
     console.error("[gare-service] GET /gare a échoué :", error);
-    return [];
+    throw error;
   }
 }
 

@@ -34,7 +34,7 @@ import type { Gare } from "@/lib/types/gare.types";
 
 const AgencyCardSkeleton = () => (
   <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden animate-pulse">
-    <div className="h-32 bg-gradient-to-br from-gray-100 to-gray-200" />
+    <div className="h-32 bg-linear-to-br from-gray-100 to-gray-200" />
     <div className="pt-9 pb-4 px-4 space-y-2">
       <div className="h-4 bg-gray-100 rounded w-3/4" />
       <div className="h-3 bg-gray-100 rounded w-1/2" />
@@ -116,7 +116,7 @@ export default function AgencyListPage() {
       {/* ═══════════════════════════════════════════════════════════════════
           HERO
       ═══════════════════════════════════════════════════════════════════ */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-blue-700 via-blue-800 to-indigo-900 px-4 pt-12 pb-32">
+      <section className="relative overflow-hidden bg-linear-to-br from-blue-700 via-blue-800 to-indigo-900 px-4 pt-12 pb-32">
         {/* Pattern décoratif */}
         <div
           className="absolute inset-0 opacity-10"

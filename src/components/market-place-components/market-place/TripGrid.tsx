@@ -1,12 +1,12 @@
 import { ArrowRight, Calendar, Clock, MapPin, Users, Wifi, Snowflake, Usb, Zap } from "lucide-react";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { formatDateOnly } from "@/lib/services/date-services";
 import { Trip } from "@/lib/types/models/Trip";
 import { useRouter } from "next/navigation";
 
 function safeSrc(url: string | null | undefined): string {
-  if (!url) return "/placeholder.svg";
-  try { new URL(url); return url; } catch { return "/placeholder.svg"; }
+  if (!url) return "/urban-bus-stop-public-transport-dubai-city.jpg";
+  try { new URL(url); return url; } catch { return "/urban-bus-stop-public-transport-dubai-city.jpg"; }
 }
 
 function amenityIcon(a: string): React.ReactNode {
@@ -26,6 +26,90 @@ function classColor(c: string): string {
     default: return "bg-gray-100 text-gray-600";
   }
 }
+
+// ── Countdown Timer ───────────────────────────────────────────────────────────
+
+interface TimeLeft {
+  days: number;
+  hours: number;
+  minutes: number;
+  seconds: number;
+}
+
+function buildDepartureDateTime(dateDepartPrev?: string, heureDepartEffectif?: string): string | null {
+  if (!dateDepartPrev) return null;
+  // dateDepartPrev can be an ISO string or just a date "YYYY-MM-DD"
+  const dateOnly = dateDepartPrev.split("T")[0];
+  if (heureDepartEffectif) {
+    // heureDepartEffectif can be "HH:mm" or a full ISO
+    const timeOnly = heureDepartEffectif.includes("T")
+      ? heureDepartEffectif.split("T")[1].substring(0, 5)
+      : heureDepartEffectif.substring(0, 5);
+    return `${dateOnly}T${timeOnly}:00`;
+  }
+  return `${dateOnly}T00:00:00`;
+}
+
+function CountdownTimer({ departureDateTime }: { departureDateTime: string }) {
+  const calc = (): TimeLeft | null => {
+    const diff = +new Date(departureDateTime) - +new Date();
+    if (diff <= 0) return null;
+    return {
+      days: Math.floor(diff / (1000 * 60 * 60 * 24)),
+      hours: Math.floor((diff / (1000 * 60 * 60)) % 24),
+      minutes: Math.floor((diff / 1000 / 60) % 60),
+      seconds: Math.floor((diff / 1000) % 60),
+    };
+  };
+
+  const [timeLeft, setTimeLeft] = useState<TimeLeft | null>(calc);
+
+  useEffect(() => {
+    const id = setInterval(() => setTimeLeft(calc()), 1000);
+    return () => clearInterval(id);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [departureDateTime]);
+
+  if (!timeLeft) return null;
+
+  const pad = (n: number) => String(n).padStart(2, "0");
+
+  const Unit = ({ value, label }: { value: number; label: string }) => (
+    <div className="flex flex-col items-center">
+      <span className="text-sm font-bold text-red-500 tabular-nums">{pad(value)}</span>
+      <span className="text-[9px] text-red-400 uppercase tracking-wide">{label}</span>
+    </div>
+  );
+
+  const Sep = () => <span className="text-red-400 font-bold text-sm pb-2">:</span>;
+
+  // Only show "imminent" badge when departure is less than 2 hours away
+  const totalMinutes = timeLeft.days * 1440 + timeLeft.hours * 60 + timeLeft.minutes;
+  const isImminent = totalMinutes <= 120;
+
+  return (
+    <div className={`rounded-xl px-3 py-2 mb-3 ${isImminent ? "bg-red-50 border border-red-100" : "bg-orange-50 border border-orange-100"}`}>
+      <p className={`text-[10px] font-semibold text-center mb-1 ${isImminent ? "text-red-600" : "text-orange-600"}`}>
+        {isImminent ? "🔥 Départ imminent !" : "⏳ Départ dans :"}
+      </p>
+      <div className="flex items-end justify-center gap-1">
+        {timeLeft.days > 0 && (
+          <>
+            <Unit value={timeLeft.days} label="j" />
+            <Sep />
+          </>
+        )}
+        <Unit value={timeLeft.hours} label="h" />
+        <Sep />
+        <Unit value={timeLeft.minutes} label="m" />
+        <Sep />
+        <Unit value={timeLeft.seconds} label="s" />
+      </div>
+    </div>
+  );
+}
+
+// ── TripGrid ──────────────────────────────────────────────────────────────────
 
 export interface TripGrid {
   filteredTrips: Partial<Trip>[];
@@ -50,6 +134,13 @@ export default function TripGrid({ filteredTrips, navigate }: TripGrid) {
         const seatsLeft = trip.nbrPlaceRestante ?? 0;
         const seatsFull = seatsLeft === 0;
 
+        // Build a reliable ISO datetime for the countdown
+        const departureISO = buildDepartureDateTime(
+          trip.dateDepartPrev,
+          trip.heureDepartEffectif,
+        );
+        const showCountdown = !isPast && !seatsFull && !!departureISO;
+
         return (
           <div
             key={trip.idVoyage}
@@ -67,7 +158,7 @@ export default function TripGrid({ filteredTrips, navigate }: TripGrid) {
                 src={safeSrc(trip.bigImage)}
                 alt={`${trip.lieuDepart} → ${trip.lieuArrive}`}
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                onError={(e) => { e.currentTarget.src = "/placeholder.svg"; }}
+                onError={(e) => { e.currentTarget.src = "/urban-bus-stop-public-transport-dubai-city.jpg"; }}
               />
               <div className="absolute inset-0 bg-linear-to-t from-black/40 via-transparent to-transparent" />
 
@@ -154,6 +245,11 @@ export default function TripGrid({ filteredTrips, navigate }: TripGrid) {
                     </span>
                   )}
                 </div>
+              )}
+
+              {/* ── Countdown ── affiché uniquement pour les voyages à venir */}
+              {showCountdown && (
+                <CountdownTimer departureDateTime={departureISO!} />
               )}
 
               {/* Bouton */}

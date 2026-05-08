@@ -70,10 +70,10 @@ export const API_ROUTES = {
 
   // ── Planning (LigneService) ─────────────────────────────────────
   planning: {
-    byAgence: (agencyId: string) => `/planning/${agencyId}`,
-    create: "/planning",
-    update: (id: string) => `/planning/${id}`,
-    delete: (id: string) => `/planning/${id}`,
+    byAgence: (agencyId: string) => `/ligne-service/agence/${agencyId}`,
+    create: "/ligne-service",
+    update: (id: string) => `/ligne-service/${id}`,
+    delete: (id: string) => `/ligne-service/${id}`,
   },
 
   // ── Véhicules ───────────────────────────────────────────────────

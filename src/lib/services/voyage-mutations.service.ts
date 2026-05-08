@@ -10,54 +10,55 @@ import apiClient from "@/lib/api/api-client";
 export interface BrouillonCreateDTO {
   agenceVoyageId: string;
   titre: string;
-  description?: string;
-  lieuDepart?: string;
-  lieuArrive?: string;
-  pointDeDepart?: string;
-  pointArrivee?: string;
-  dateDepartPrev?: string; // ISO 8601
-  heureDepartEffectif?: string; // "HH:mm"
-  heureArrive?: string;
-  dureeEstimee?: string;
-  classVoyageId?: string | null;
-  vehiculeId?: string | null;
-  chauffeurId?: string | null;
-  nbrPlaceReservable?: number | null;
-  prix?: number | null;
-  amenities?: string[];
-  smallImage?: string | null;
-  bigImage?: string | null;
-  dateLimiteReservation?: string | null;
-  dateLimiteConfirmation?: string | null;
-  notes?: string | null;
-  ligneServiceId?: string | null;
+  description: string | null; // Changé : obligatoire d'envoyer soit string soit null
+  lieuDepart: string;
+  lieuArrive: string;
+  pointDeDepart: string | null;
+  pointArrivee: string | null;
+  dateDepartPrev: string | null; 
+  heureDepartEffectif: string | null;
+  heureArrive: string | null;
+  dureeEstimee: string | null;
+  classVoyageId: string | null;
+  vehiculeId: string | null;
+  chauffeurId: string | null;
+  nbrPlaceReservable: number | null;
+  prix: number | null;
+  amenities: string[] | null;
+  smallImage: string | null;
+  bigImage: string | null;
+  dateLimiteReservation: string | null;
+  dateLimiteConfirmation: string | null;
+  notes: string | null;
+  ligneServiceId: string | null;
 }
 
 export type BrouillonUpdateDTO = Partial<BrouillonCreateDTO>;
 
 export interface VoyageCreateDTO {
-  agenceVoyageId: string;
   titre: string;
+  description: string;
+  dateDepartPrev: string;      // ISO 8601
   lieuDepart: string;
   lieuArrive: string;
-  pointDeDepart?: string;
-  pointArrivee?: string;
-  dateDepartPrev: string;
-  heureDepartEffectif: string;
-  heureArrive?: string;
-  dureeEstimee?: string;
-  classVoyageId: string;
-  vehiculeId: string;
-  chauffeurId?: string | null;
+  heureArrive: string;        // ISO 8601
+  pointDeDepart: string;
+  pointArrivee: string;
   nbrPlaceReservable: number;
-  prix: number;
-  amenities?: string[];
+  heureDepartEffectif?: string; // ISO 8601
+  nbrPlaceReserve: number;
+  nbrPlaceConfirm: number;
+  statusVoyage: "EN_ATTENTE" | "PUBLIE" | "EN_COURS" | "TERMINE" | "ANNULE";
+  nbrPlaceRestante: number;
+  dateLimiteReservation: string;
+  dateLimiteConfirmation: string;
   smallImage?: string | null;
   bigImage?: string | null;
-  dateLimiteReservation?: string | null;
-  dateLimiteConfirmation?: string | null;
-  description?: string;
-  voyageBrouillonId?: string | null;
+  chauffeurId: string;         // UUID
+  vehiculeId: string;          // UUID
+  classVoyageId: string;       // UUID
+  agenceVoyageId: string;      // UUID
+  amenities: string[] | null;
 }
 
 export type VoyageUpdateDTO = Partial<VoyageCreateDTO>;
@@ -70,13 +71,29 @@ export interface MutationResult<T = unknown> {
   error?: string;
 }
 
+// ── Helper de Nettoyage (CORRECTION) ──────────────────────────────────────────
+/**
+ * Transforme les chaînes vides ("") en `null`.
+ * Cela empêche Spring Boot de crasher (HttpMessageNotReadableException)
+ * lorsqu'il essaie de parser "" en UUID, LocalDate ou Integer.
+ */
+function cleanPayload<T extends Record<string, any>>(payload: T): T {
+  const cleaned = { ...payload };
+  for (const key in cleaned) {
+    if (cleaned[key] === "") {
+      cleaned[key] = null as any;
+    }
+  }
+  return cleaned;
+}
+
 // ── Brouillon ─────────────────────────────────────────────────────────────────
 
 export async function createBrouillon(
   payload: BrouillonCreateDTO,
 ): Promise<MutationResult> {
   try {
-    const res = await apiClient.post("/voyage/brouillon", payload);
+    const res = await apiClient.post("/voyage/brouillon", cleanPayload(payload));
     return { success: true, data: res.data };
   } catch (err: unknown) {
     const msg = extractErrorMessage(err);
@@ -90,7 +107,7 @@ export async function updateBrouillon(
   payload: BrouillonUpdateDTO,
 ): Promise<MutationResult> {
   try {
-    const res = await apiClient.put(`/voyage/brouillon/${id}`, payload);
+    const res = await apiClient.put(`/voyage/brouillon/${id}`, cleanPayload(payload));
     return { success: true, data: res.data };
   } catch (err: unknown) {
     const msg = extractErrorMessage(err);
@@ -120,7 +137,7 @@ export async function createVoyage(
   payload: VoyageCreateDTO,
 ): Promise<MutationResult> {
   try {
-    const res = await apiClient.post("/voyage", payload);
+    const res = await apiClient.post("/voyage", cleanPayload(payload));
     return { success: true, data: res.data };
   } catch (err: unknown) {
     const msg = extractErrorMessage(err);
@@ -134,7 +151,7 @@ export async function updateVoyage(
   payload: VoyageUpdateDTO,
 ): Promise<MutationResult> {
   try {
-    const res = await apiClient.put(`/voyage/${id}`, payload);
+    const res = await apiClient.put(`/voyage/${id}`, cleanPayload(payload));
     return { success: true, data: res.data };
   } catch (err: unknown) {
     const msg = extractErrorMessage(err);
