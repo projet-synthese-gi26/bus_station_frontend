@@ -32,6 +32,7 @@ import {
   updateBsmCompte,
   type BsmStatistiques,
 } from "@/lib/services/bsm-service";
+import { getGares, getGareByManagerId } from "@/lib/services/gare-service";
 import type { Gare, UpdateGareDTO } from "@/lib/types/gare.types";
 import type { AgenceVoyageFull, StatutAgence } from "@/lib/types/agence.types";
 import type {
@@ -45,7 +46,6 @@ import type {
   UpdatePolitiqueDTO,
   CreateTaxeDTO,
 } from "@/lib/types/bsm.types";
-import { getGares } from "@/lib/services/gare-service";
 
 export function useBsmDashboard() {
   // ── État principal ────────────────────────────────────────────────────────
@@ -107,39 +107,49 @@ export function useBsmDashboard() {
       let gid: number | string = bsmCompte.gareId;
 
       if (!gid || gid === 0) {
-        const toutesLesGares = await getGares({ size: 100 });
+        // Stratégie 1 : GET /gare/manager/{userId}
+        const gareParManager = await getGareByManagerId(bsmCompte.userId);
+        if (gareParManager) {
+          gid = gareParManager.idGare;
+          console.log("[useBsmDashboard] gare résolue via /gare/manager:", gareParManager.nom, "→", gid);
+        } else {
+          // Stratégie 2 : cherche dans la liste des gares
+          const toutesLesGares = await getGares({ size: 100 });
 
-        let gareMatch = toutesLesGares.find(
-          (g) => g.managerId === bsmCompte.userId,
-        );
-
-        if (!gareMatch && bsmCompte.username) {
-          const code = bsmCompte.username.replace(/^bsm_/i, "").toLowerCase();
-          gareMatch = toutesLesGares.find((g) =>
-            g.nom.toLowerCase().includes(code),
+          let gareMatch = toutesLesGares.find(
+            (g) => g.managerId === bsmCompte.userId,
           );
-        }
 
-        if (!gareMatch && bsmCompte.email) {
-          const domainCode = bsmCompte.email
-            .split("@")[1]
-            ?.split(".")[0]
-            ?.replace(/^gare-/i, "")
-            .toLowerCase();
-          if (domainCode) {
+          // Stratégie 3 : code extrait du username (bsm_mvan → mvan)
+          if (!gareMatch && bsmCompte.username) {
+            const code = bsmCompte.username.replace(/^bsm_/i, "").toLowerCase();
             gareMatch = toutesLesGares.find((g) =>
-              g.nom.toLowerCase().includes(domainCode),
+              g.nom.toLowerCase().includes(code),
             );
           }
-        }
 
-        if (gareMatch) {
-          gid = gareMatch.idGare;
-          console.log("[useBsmDashboard] gare résolue:", gareMatch.nom, "→", gid);
-        } else {
-          setError("Aucune gare associée à ce compte BSM.");
-          setIsLoading(false);
-          return;
+          // Stratégie 4 : code extrait du domaine email (gare-mvan.cm → mvan)
+          if (!gareMatch && bsmCompte.email) {
+            const domainCode = bsmCompte.email
+              .split("@")[1]
+              ?.split(".")[0]
+              ?.replace(/^gare-/i, "")
+              .toLowerCase();
+            if (domainCode) {
+              gareMatch = toutesLesGares.find((g) =>
+                g.nom.toLowerCase().includes(domainCode),
+              );
+            }
+          }
+
+          if (gareMatch) {
+            gid = gareMatch.idGare;
+            console.log("[useBsmDashboard] gare résolue via liste:", gareMatch.nom, "→", gid);
+          } else {
+            setError("Aucune gare associée à ce compte BSM.");
+            setIsLoading(false);
+            return;
+          }
         }
       }
       setGareId(gid);

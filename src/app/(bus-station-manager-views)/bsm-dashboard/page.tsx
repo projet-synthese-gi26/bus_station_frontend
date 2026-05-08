@@ -253,9 +253,9 @@ export default function BsmDashboardPage() {
             </p>
           ) : (
             <div className="space-y-2.5">
-              {agences.slice(0, 5).map((agence) => (
+              {agences.slice(0, 5).map((agence, idx) => (
                 <div
-                  key={agence.agencyId}
+                  key={agence.agencyId || idx}
                   className="flex items-center justify-between py-2 border-b border-slate-50 last:border-0"
                 >
                   <div className="flex items-center gap-2.5">

@@ -1,5 +1,7 @@
 import { AxiosError, AxiosResponse } from "axios";
 import axiosInstance from "@/lib/services/axios-services/axiosInstance";
+import apiClient from "@/lib/api/api-client";
+import type { VoyagePreviewDTO } from "@/lib/types/generated-api";
 import {Trip, TripDetails} from "@/lib/types/models/Trip";
 import { PaginatedResponse } from "../types/common";
 import { TripAxiosResponseInterface } from "@/lib/types/models/Trip";
@@ -9,16 +11,14 @@ const url: string = "voyage";
 
 export async function retrieveAllTrips(): Promise<TripAxiosResponseInterface | null> {
   try {
-    const apiResponse: AxiosResponse<TripAxiosResponseInterface> = await axiosInstance.get(`/${url}/all`);
-    if (apiResponse.status === 200) {
-      return apiResponse.data;
-    } else {
-      console.warn("Unattended http code", apiResponse.status);
-      return null;
-    }
+    const res = await apiClient.get(`/voyage`, { params: { page: 0, size: 100 } });
+    const data = res.data;
+    if (Array.isArray(data)) return { content: data } as unknown as TripAxiosResponseInterface;
+    if (data?.content) return data as TripAxiosResponseInterface;
+    return null;
   } catch (error) {
     console.error("error during retrieving trips", error);
-    throw new Error("error during retrieving trips");
+    return null;
   }
 }
 
@@ -71,7 +71,7 @@ export async function getTripsByAgency(agencyId: string): Promise<PaginatedRespo
   } catch (error) {
     const axiosError = error as AxiosError;
     console.error("[trip-service] Erreur de récupération des voyages par agence:", axiosError.response?.data || axiosError.message);
-    throw axiosError;
+    return null;
   }
 }
 
@@ -100,6 +100,22 @@ export async function getTripDetailsForEdit(tripId: string): Promise<VoyageDetai
 }
 
 
+
+export async function getSimilairVoyages(
+  voyageId: string,
+): Promise<VoyagePreviewDTO[]> {
+  if (!voyageId) return [];
+  try {
+    const res = await apiClient.get(`/voyage/${voyageId}/similaires`);
+    const data = res.data;
+    if (Array.isArray(data)) return data as VoyagePreviewDTO[];
+    if (data?.content && Array.isArray(data.content)) return data.content as VoyagePreviewDTO[];
+    return [];
+  } catch {
+    console.error("[trip-service] GET /voyage/{id}/similaires failed");
+    return [];
+  }
+}
 
 /**
  * Supprime un voyage de manière définitive.

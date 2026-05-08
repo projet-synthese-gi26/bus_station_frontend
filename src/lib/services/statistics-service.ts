@@ -1,52 +1,31 @@
 // src/lib/services/statistics-service.ts
-import { AxiosResponse, AxiosError } from "axios";
-import axiosInstance from "./axios-services/axiosInstance";
-import {
-  AgenceStatisticsDTO,
-  AgenceEvolutionDTO,
-} from "../types/generated-api";
+import apiClient from "@/lib/api/api-client";
+import type { AgenceStatisticsDTO, AgenceEvolutionDTO } from "../types/generated-api";
 
 const url = "/statistiques/agence";
 
-/**
- * Récupère les statistiques générales (KPIs) pour une agence.
- */
 export async function getAgencyGeneralStats(
   agencyId: string,
-): Promise<AgenceStatisticsDTO> {
-  if (!agencyId) throw new Error("Agency ID is required");
+): Promise<AgenceStatisticsDTO | null> {
+  if (!agencyId) return null;
   try {
-    const response: AxiosResponse<AgenceStatisticsDTO> =
-      await axiosInstance.get(`${url}/${agencyId}/general`);
-    return response.data;
-  } catch (error) {
-    const axiosError = error as AxiosError;
-    console.error(
-      "[statistics-service] Erreur getAgencyGeneralStats:",
-      axiosError.response?.data || axiosError.message,
-    );
-    throw axiosError;
+    const res = await apiClient.get(`${url}/${agencyId}/general`);
+    return res.data as AgenceStatisticsDTO;
+  } catch {
+    console.error("[statistics-service] GET general stats failed");
+    return null;
   }
 }
 
-/**
- * Récupère les données d'évolution pour les graphiques.
- */
 export async function getAgencyEvolutionStats(
   agencyId: string,
-): Promise<AgenceEvolutionDTO> {
-  if (!agencyId) throw new Error("Agency ID is required");
+): Promise<AgenceEvolutionDTO | null> {
+  if (!agencyId) return null;
   try {
-    const response: AxiosResponse<AgenceEvolutionDTO> = await axiosInstance.get(
-      `${url}/${agencyId}/evolution`,
-    );
-    return response.data;
-  } catch (error) {
-    const axiosError = error as AxiosError;
-    console.error(
-      "[statistics-service] Erreur getAgencyEvolutionStats:",
-      axiosError.response?.data || axiosError.message,
-    );
-    throw axiosError;
+    const res = await apiClient.get(`${url}/${agencyId}/evolution`);
+    return res.data as AgenceEvolutionDTO;
+  } catch {
+    console.error("[statistics-service] GET evolution stats failed");
+    return null;
   }
 }

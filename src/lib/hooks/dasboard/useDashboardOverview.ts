@@ -23,7 +23,7 @@ export function useDashboardOverview() {
             const [stats, evolution, bookingsResponse] = await Promise.all([
                 getAgencyGeneralStats(agencyId),
                 getAgencyEvolutionStats(agencyId),
-                getReservationsByAgency(agencyId) // On récupère les 5 plus récentes
+                getReservationsByAgency(agencyId),
             ]);
 
             setGeneralStats(stats);
@@ -32,7 +32,7 @@ export function useDashboardOverview() {
 
         } catch (error) {
             console.error("Erreur lors du chargement des données du dashboard", error);
-            setApiError("Impossible de charger les données du tableau de bord.");
+            // Pas de setApiError ici : les stats sont optionnelles, on affiche le dashboard vide
         } finally {
             setIsLoading(false);
         }

@@ -53,25 +53,6 @@ const DashboardOverviewPage = () => {
     );
   }
 
-  // Logique de "pas d'agence sélectionnée" (de la version HEAD)
-
-  // Logique d'erreur (commune aux deux)
-  if (apiError) {
-    return (
-      <div className="p-10 text-center text-red-600 bg-red-50 rounded-xl border border-red-200">
-        <AlertCircle className="mx-auto h-12 w-12 text-red-400" />
-        <h3 className="mt-2 text-lg font-semibold">Erreur de chargement</h3>
-        <p className="mt-1 text-sm">{apiError}</p>
-        <button
-          onClick={() => window.location.reload()}
-          className="mt-4 px-6 py-3 bg-red-600 text-white rounded-xl flex items-center gap-2 mx-auto hover:bg-red-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
-        >
-          <RefreshCw className="h-4 w-4" /> Réessayer
-        </button>
-      </div>
-    );
-  }
-
   const stats: StatCardData[] = [
     {
       label: "Revenu Total",
@@ -118,8 +99,8 @@ const DashboardOverviewPage = () => {
       />
 
       {/* Hero CTA Card de l'autre version */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 p-8 text-white shadow-2xl">
-        <div className="absolute inset-0 bg-gradient-to-r from-black/10 to-transparent"></div>
+      <div className="relative overflow-hidden rounded-2xl bg-linear-to-r from-blue-500 via-blue-600 to-blue-700 p-8 text-white shadow-2xl">
+        <div className="absolute inset-0 bg-linear-to-r from-black/10 to-transparent"></div>
         <div className="relative flex flex-col lg:flex-row items-center justify-between gap-6">
           <div className="flex-1">
             <h2 className="text-3xl font-bold mb-2">
@@ -137,7 +118,7 @@ const DashboardOverviewPage = () => {
               Planifier un Voyage
             </button>
           </div>
-          <div className="flex-shrink-0">
+          <div className="shrink-0">
             <div className="w-32 h-32 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm border border-white/20">
               <BarChart3 className="h-16 w-16 text-white" />
             </div>

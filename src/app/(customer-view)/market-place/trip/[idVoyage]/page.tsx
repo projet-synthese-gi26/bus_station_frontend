@@ -10,6 +10,7 @@ import TripDetailsLoadingError from "@/components/market-place-components/trip-d
 import TransparentModal from "@/modals/TransparentModal";
 import ReservationProcessModal from "@/modals/ReservationProcessModal";
 import { PaymentModal } from "@/modals/PaymentRequestModal";
+import SimilarTrips from "@/components/market-place-components/trip-details/SimilarTrips";
 
 
 export default function TripDetails({params,}: { params: Promise<{ idVoyage: string }>; }): JSX.Element
@@ -78,6 +79,8 @@ export default function TripDetails({params,}: { params: Promise<{ idVoyage: str
           reservationSuccessMessage={tripDetailsHook.reservationSuccessMessage}
         />
       </TransparentModal>
+
+      <SimilarTrips voyageId={idVoyage} />
     </div>
   );
 }

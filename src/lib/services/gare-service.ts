@@ -212,6 +212,20 @@ export async function getVoyagesByGare(
 
 export const getDepartsByGareId = getVoyagesByGare;
 
+// ─── GET /gare/manager/{managerId} ───────────────────────────────────────────
+
+export async function getGareByManagerId(
+  managerId: string,
+): Promise<Gare | null> {
+  try {
+    const res = await apiClient.get(`/gare/manager/${managerId}`);
+    const raw = Array.isArray(res.data) ? res.data[0] : res.data;
+    return raw ? normalizeGare(raw) : null;
+  } catch {
+    return null;
+  }
+}
+
 // ─── PUT /gare/{id} — BSM uniquement ─────────────────────────────────────────
 
 export async function updateGare(
