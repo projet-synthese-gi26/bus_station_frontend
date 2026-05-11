@@ -18,7 +18,7 @@ interface WeeklyScheduleTimelineProps {
   refetch: () => void;
   isEditable: boolean;
   onDeleteRequest: (entryId: string) => void;
-  onTripClick: (entryId: string) => void;
+  onTripClick?: (entryId: string) => void;
 }
 
 const categoryColors: { [key: string]: { bg: string; border: string } } = {
@@ -70,7 +70,7 @@ function DayRow({
       {isOver && isEditable && (
         <div className="absolute inset-0 bg-primary/10 z-0" />
       )}
-      <div className="w-28 flex-shrink-0 pr-4 text-right font-bold text-gray-600 pt-3 text-sm sticky left-0 bg-white/80 backdrop-blur-sm z-10">
+      <div className="w-28 shrink-0 pr-4 text-right font-bold text-gray-600 pt-3 text-sm sticky left-0 bg-white/80 backdrop-blur-sm z-10">
         {day}
       </div>
       <div className="relative w-full h-full">
@@ -210,11 +210,11 @@ export default function WeeklyScheduleTimeline({
           style={{ minWidth: `${hours.length * 3.5}rem` }}
         >
           <div className="flex h-10 items-center">
-            <div className="w-28 flex-shrink-0" />
+            <div className="w-28 shrink-0" />
             {hours.map((hour) => (
               <div
                 key={hour}
-                className="w-14 text-center text-xs text-gray-500 flex-shrink-0"
+                className="w-14 text-center text-xs text-gray-500 shrink-0"
               >
                 {hour}
               </div>

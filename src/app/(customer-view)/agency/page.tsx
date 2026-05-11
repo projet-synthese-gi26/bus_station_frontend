@@ -116,29 +116,29 @@ export default function AgencyListPage() {
       {/* ═══════════════════════════════════════════════════════════════════
           HERO
       ═══════════════════════════════════════════════════════════════════ */}
-      <section className="relative overflow-hidden bg-linear-to-br from-blue-700 via-blue-800 to-indigo-900 px-4 pt-12 pb-32">
-        {/* Pattern décoratif */}
+      <section className="relative overflow-hidden rounded-3xl mx-4 mt-4 bg-linear-to-br from-blue-700 via-blue-800 to-indigo-900 px-4 pt-14 pb-32">
+        {/* Grille fine */}
         <div
-          className="absolute inset-0 opacity-10"
+          className="absolute inset-0 opacity-[0.07]"
           style={{
-            backgroundImage: `radial-gradient(circle at 1px 1px, white 1px, transparent 0)`,
-            backgroundSize: "32px 32px",
+            backgroundImage: `linear-gradient(rgba(255,255,255,0.8) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.8) 1px, transparent 1px)`,
+            backgroundSize: "40px 40px",
           }}
         />
-
-        {/* Cercles décoratifs flous */}
-        <div className="absolute -top-20 -right-20 w-80 h-80 bg-blue-400/20 rounded-full blur-3xl" />
-        <div className="absolute -bottom-32 -left-20 w-96 h-96 bg-indigo-400/20 rounded-full blur-3xl" />
+        {/* Cercle lumineux centré */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-125 h-125 bg-blue-400/20 rounded-full blur-3xl" />
+        {/* Trait diagonal décoratif */}
+        <div className="absolute bottom-0 right-0 w-96 h-96 border-r-2 border-t-2 border-white/5 rounded-tl-full" />
 
         <div className="relative max-w-6xl mx-auto">
-          <div className="flex items-center gap-2 text-blue-200 text-sm font-medium mb-3">
-            <Compass className="w-4 h-4" />
-            <span>Découvrir nos partenaires</span>
+          <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 backdrop-blur-sm px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-blue-100 mb-5">
+            <Compass className="w-3 h-3" />
+            Découvrir nos partenaires
           </div>
-          <h1 className="text-4xl sm:text-5xl font-bold text-white mb-3 leading-tight">
+          <h1 className="text-4xl sm:text-5xl font-black text-white mb-3 leading-[1.1] tracking-tight">
             Agences de Voyage
           </h1>
-          <p className="text-blue-100 text-base max-w-2xl mb-6 leading-relaxed">
+          <p className="text-blue-100/80 text-base max-w-xl mb-6 leading-relaxed">
             Trouvez l&apos;agence qui correspond à votre trajet. Comparez,
             choisissez et réservez en quelques clics.
           </p>

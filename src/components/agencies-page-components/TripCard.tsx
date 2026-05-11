@@ -10,7 +10,7 @@ export default function TripCard({ trip }: TripCardProps) {
   const { t } = useTranslation();
 
   // Sécurisation des données pour éviter les crashs
-  const imageSrc = trip.bigImage || trip.smallImage || "/placeholder.svg";
+  const imageSrc = trip.bigImage || trip.smallImage || "/placeholder.png";
   const prix = trip.prix || 0;
   const rating = 4.5; // Valeur par défaut car le modèle Trip n'a pas encore de rating
 
@@ -24,7 +24,7 @@ export default function TripCard({ trip }: TripCardProps) {
           height={300}
           className="w-full h-full object-cover"
         />
-        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4">
+        <div className="absolute bottom-0 left-0 right-0 bg-linear-to-t from-black/70 to-transparent p-4">
           <h3 className="text-xl font-bold text-white">{trip.titre}</h3>{" "}
           {/* CORRIGÉ */}
           <div className="flex items-center text-white/90">

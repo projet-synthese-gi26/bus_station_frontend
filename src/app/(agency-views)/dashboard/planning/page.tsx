@@ -74,6 +74,7 @@ export default function AgencyPlanningPage() {
       await createPlannerTrip(data);
       toast.success("Créneau créé !");
       refetchLignes();
+      refreshSchedule();   // ← ajouter
     },
     [refetchLignes],
   );
@@ -84,6 +85,7 @@ export default function AgencyPlanningPage() {
       await updatePlannerTrip(editingLigne.id, data);
       toast.success("Créneau mis à jour !");
       refetchLignes();
+      refreshSchedule();   // ← ajouter
     },
     [editingLigne, refetchLignes],
   );
@@ -93,6 +95,7 @@ export default function AgencyPlanningPage() {
       await deletePlannerTrip(id);
       toast.success("Créneau supprimé.");
       refetchLignes();
+      refreshSchedule();   // ← ajouter
     },
     [refetchLignes],
   );
@@ -110,6 +113,9 @@ export default function AgencyPlanningPage() {
     },
     [lignes],
   );
+
+  const [scheduleKey, setScheduleKey] = useState(0);
+  const refreshSchedule = () => setScheduleKey((k) => k + 1);
 
   // ── États de chargement ──────────────────────────────────────────────────
   if (isLoading) {
@@ -186,7 +192,7 @@ export default function AgencyPlanningPage() {
         </div>
 
         {/* WeeklySchedule en mode éditable */}
-        <WeeklySchedule agencyId={agencyId} isEditable={true} />
+        <WeeklySchedule key={scheduleKey} agencyId={agencyId} isEditable={true} />
       </div>
 
       {/* Modales */}

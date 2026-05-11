@@ -18,9 +18,8 @@ const nextConfig: import('next').NextConfig = {
             'media.istockphoto.com',
             'images.unsplash.com',
         ].map(hostname => ({
-            protocol: 'https' as const,
-            hostname,
-            pathname: '/**',
+            protocol: "https",
+            hostname: "encrypted-tbn0.gstatic.com",
         })),
     },
     eslint:{

@@ -25,7 +25,7 @@ export async function retrieveAllTrips(): Promise<TripAxiosResponseInterface | n
 export async function retrieveTripDetail(tripId: string): Promise<Trip | null> {
   if (!tripId || tripId === "") throw new Error("the trip id must not empty");
   try {
-    const apiResponse: AxiosResponse<Trip> = await axiosInstance.get(`/${url}/byId/${tripId}`);
+    const apiResponse: AxiosResponse<Trip> = await axiosInstance.get(`${url}/${tripId}`);
     if (apiResponse.status === 200) {
       console.log(apiResponse);
       return apiResponse.data;
@@ -41,7 +41,7 @@ export async function retrieveTripDetail(tripId: string): Promise<Trip | null> {
 
 export async function createTrip(data: VoyageCreateRequestDTO): Promise<Voyage | null> {
   try {
-    const response: AxiosResponse<Voyage> = await axiosInstance.post(`${url}/create`, data);
+    const response: AxiosResponse<Voyage> = await axiosInstance.post(url, data);
     return response.data;
   } catch (error) {
     const axiosError = error as AxiosError;
@@ -92,7 +92,7 @@ export async function publishTrip(tripId: string): Promise<Voyage|null> {
 // AJOUTÉ : Fonction pour récupérer les détails complets, nécessaire pour l'édition
 export async function getTripDetailsForEdit(tripId: string): Promise<VoyageDetailsDTO> {
   try {
-    const response: AxiosResponse<VoyageDetailsDTO> = await axiosInstance.get(`${url}/byId/${tripId}`);
+    const response: AxiosResponse<VoyageDetailsDTO> = await axiosInstance.get(`${url}/${tripId}`);
     return response.data;
   } catch (error) {
     throw error as AxiosError;

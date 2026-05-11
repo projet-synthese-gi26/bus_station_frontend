@@ -16,7 +16,7 @@ export function useReservationStep2(selectedSeats: number[], setStep: (step: num
             passengers: selectedSeats.map((seat) => ({
                 numeroPieceIdentific: "",
                 nom: "",
-                genre: "Male",
+                genre: "MALE",
                 age: 0,
                 nbrBaggage: 0,
                 placeChoisis: seat

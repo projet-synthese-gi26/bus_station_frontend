@@ -110,7 +110,8 @@ export function useBrouillons() {
       try {
         await publierBrouillon(id);
         toast.success("Voyage publié avec succès !", { id: toastId });
-        await fetchBrouillons();
+        // Suppression optimiste — le backend ne passe pas le statut à CONVERTI
+        setBrouillons((prev) => prev.filter((b) => b.id !== id));
       } catch (e) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const err = e as any;

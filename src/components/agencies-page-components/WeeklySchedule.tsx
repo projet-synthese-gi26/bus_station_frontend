@@ -1,24 +1,12 @@
 "use client";
-// src/components/agencies-page-components/WeeklySchedule.tsx
-/**
- * WeeklySchedule mis à jour.
- * - usePlannerTrips retourne maintenant LigneService[]
- * - On mappe LigneService → PlannerEntry (type interne avec id: string)
- * - Les sous-composants (Timeline, List, Header, Footer) utilisent PlannerEntry
- */
 
-import React, { useState, useMemo, useCallback } from "react";
-import { useRouter } from "next/navigation";
+import React, { useState, useMemo, useCallback, useEffect } from "react";
 import { usePlannerTrips } from "@/lib/hooks/agency-public-hooks/usePlannerTrips";
-import {
-  createPlannerTrip,
-  deletePlannerTrip,
-} from "@/lib/services/planner-trip-service";
-import type {
-  LigneService,
-  JourSemaine,
-} from "@/lib/types/ligne-service.types";
+import { createPlannerTrip, deletePlannerTrip } from "@/lib/services/planner-trip-service";
+import type { LigneService, JourSemaine } from "@/lib/types/ligne-service.types";
 import type { PlannerEntry } from "./weekly-schedule/DraggableTrip";
+import type { PlannerTrip } from "@/lib/types/models/Trip";
+import type { CreateLigneServiceDTO } from "@/lib/types/ligne-service.types";
 
 import WeeklyScheduleHeader from "./weekly-schedule/WeeklyScheduleHeader";
 import WeeklyScheduleTimeline from "./weekly-schedule/WeeklyScheduleTimeline";
@@ -28,30 +16,13 @@ import AddTripModal from "@/modals/AddTripModal";
 import ConfirmActionModal from "@/modals/ConfirmActionModal";
 import Loader from "@/modals/Loader";
 import toast from "react-hot-toast";
+import { getAllClassVoyagesByAgence } from "@/lib/services/class-voyage-service";
+import type { ClassVoyage } from "@/lib/types/generated-api";
 
-// ── Mapping JourSemaine → numéro ────────────────────────────────────────────
 const JOUR_TO_NUM: Record<JourSemaine, number> = {
-  LUNDI: 1,
-  MARDI: 2,
-  MERCREDI: 3,
-  JEUDI: 4,
-  VENDREDI: 5,
-  SAMEDI: 6,
-  DIMANCHE: 7,
+  LUNDI: 1, MARDI: 2, MERCREDI: 3, JEUDI: 4,
+  VENDREDI: 5, SAMEDI: 6, DIMANCHE: 7,
 };
-
-function ligneToEntries(ligne: LigneService): PlannerEntry[] {
-  return (ligne.joursOperation ?? []).map((jour) => ({
-    id: `${ligne.id}-${jour}`,
-    agencyId: ligne.agenceVoyageId,
-    title: `${ligne.lieuDepart} → ${ligne.lieuArrive}`,
-    dayOfWeek: JOUR_TO_NUM[jour],
-    startTime: ligne.heureDepart,
-    endTime: ligne.heureArrivee,
-    category: ligne.nomClasse ?? ligne.classVoyageId ?? "Standard",
-    _ligneServiceId: ligne.id,
-  }));
-}
 
 const timeToMinutes = (t: string) => {
   if (!t) return 0;
@@ -64,45 +35,47 @@ interface WeeklyScheduleProps {
   isEditable?: boolean;
 }
 
-export default function WeeklySchedule({
-  agencyId,
-  isEditable = false,
-}: WeeklyScheduleProps) {
-  const {
-    trips: lignes,
-    isLoading,
-    error,
-    refetch,
-  } = usePlannerTrips(agencyId);
+export default function WeeklySchedule({ agencyId, isEditable = false }: WeeklyScheduleProps) {
+  const { trips: lignes, isLoading, error, refetch } = usePlannerTrips(agencyId);
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [selectedEntryId, setSelectedEntryId] = useState<string | null>(null);
-  const router = useRouter();
+  const [classes, setClasses] = useState<ClassVoyage[]>([]);
+  const [selectedTripId, setSelectedTripId] = useState<string | null>(null);
 
   const daysOfWeek = useMemo(
-    () => [
-      "Lundi",
-      "Mardi",
-      "Mercredi",
-      "Jeudi",
-      "Vendredi",
-      "Samedi",
-      "Dimanche",
-    ],
+    () => ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"],
     [],
   );
   const hours = useMemo(
-    () =>
-      Array.from({ length: 24 }, (_, i) => `${i.toString().padStart(2, "0")}h`),
+    () => Array.from({ length: 24 }, (_, i) => `${i.toString().padStart(2, "0")}h`),
     [],
   );
 
-  // Convertir LigneService[] → PlannerEntry[]
-  const allEntries = useMemo<PlannerEntry[]>(
-    () => lignes.flatMap(ligneToEntries),
-    [lignes],
-  );
+  // Convertit LigneService[] → PlannerTrip[] avec IDs numériques
+  // + Map<numericId, ligneId> pour la suppression
+  const [allEntries, entryToLigne] = useMemo(() => {
+    const map = new Map<number, string>();
+    let counter = 1;
+    const entries: PlannerEntry[] = [];
+    for (const ligne of lignes) {
+      for (const jour of (ligne.joursOperation ?? [])) {
+        const id = counter++;
+        map.set(id, ligne.id);
+        entries.push({
+          id: `${ligne.id}-${jour}`,        // string
+          agencyId: ligne.agenceVoyageId,   // string
+          title: ligne.nom || `${ligne.lieuDepart} → ${ligne.lieuArrive}`,
+          dayOfWeek: JOUR_TO_NUM[jour] ?? 1,
+          startTime: ligne.heureDepart ?? "00:00",
+          endTime: ligne.heureArrivee ?? "00:00",
+          category: ligne.nomClasse ?? ligne.classVoyageId ?? "Standard",
+          _ligneServiceId: ligne.id,        // champ requis par PlannerEntry
+        });
+      }
+    }
+    return [entries, map];
+  }, [lignes]);
 
   const allCategories = useMemo(
     () => [...new Set(allEntries.map((e) => e.category))].filter(Boolean),
@@ -122,18 +95,13 @@ export default function WeeklySchedule({
       daysOfWeek.map((_, dayIndex) => {
         const dayEntries = filteredEntries
           .filter((e) => e.dayOfWeek === dayIndex + 1)
-          .sort(
-            (a, b) => timeToMinutes(a.startTime) - timeToMinutes(b.startTime),
-          );
+          .sort((a, b) => timeToMinutes(a.startTime) - timeToMinutes(b.startTime));
         const lanes: PlannerEntry[][] = [];
         dayEntries.forEach((entry) => {
           let placed = false;
           for (const lane of lanes) {
             const last = lane[lane.length - 1];
-            if (
-              last &&
-              timeToMinutes(entry.startTime) >= timeToMinutes(last.endTime)
-            ) {
+            if (last && timeToMinutes(entry.startTime) >= timeToMinutes(last.endTime)) {
               lane.push(entry);
               placed = true;
               break;
@@ -153,30 +121,27 @@ export default function WeeklySchedule({
 
   const handleFilterToggle = (category: string) => {
     setActiveFilters((prev) =>
-      prev.includes(category)
-        ? prev.filter((c) => c !== category)
-        : [...prev, category],
+      prev.includes(category) ? prev.filter((c) => c !== category) : [...prev, category],
     );
   };
 
   const handleDeleteRequest = useCallback((entryId: string) => {
-    setSelectedEntryId(entryId);
+    setSelectedTripId(entryId);
     setIsDeleteModalOpen(true);
   }, []);
 
   const handleConfirmDelete = async () => {
-    if (!selectedEntryId) return;
-    // entryId = "{ligneId}-{JOUR}" → extraire l'ID de la LigneService
-    const ligneId = selectedEntryId.includes("-")
-      ? selectedEntryId.split("-").slice(0, -1).join("-")
-      : selectedEntryId;
+    if (!selectedTripId) return;
+    const ligneId = selectedTripId?.split("-").slice(0, -1).join("-") ?? null;
+    if (!ligneId) return;
+    await deletePlannerTrip(ligneId);
     toast.loading("Suppression...");
     try {
       await deletePlannerTrip(ligneId);
       toast.dismiss();
       toast.success("Créneau supprimé !");
       setIsDeleteModalOpen(false);
-      setSelectedEntryId(null);
+      setSelectedTripId(null);
       refetch();
     } catch {
       toast.dismiss();
@@ -184,14 +149,14 @@ export default function WeeklySchedule({
     }
   };
 
-  const handleTripClick = useCallback(
-    (entryId: string) => {
-      if (!isEditable) {
-        router.push(`/market-place/trip/${entryId}`);
-      }
-    },
-    [isEditable, router],
-  );
+  useEffect(() => {
+    if (!agencyId) return;
+    getAllClassVoyagesByAgence(agencyId)
+    .then((data) => {
+      console.log("Classes chargées:", data);  // ← vérifier les IDs
+      setClasses(data ?? []);
+    })
+  }, [agencyId]);
 
   if (isLoading)
     return (
@@ -211,10 +176,7 @@ export default function WeeklySchedule({
           onFilterToggle={handleFilterToggle}
           onAddRequest={isEditable ? () => setIsAddModalOpen(true) : undefined}
         />
-        <WeeklyScheduleList
-          daysOfWeek={daysOfWeek}
-          dailySchedules={dailySchedules}
-        />
+        <WeeklyScheduleList daysOfWeek={daysOfWeek} dailySchedules={dailySchedules} />
         <WeeklyScheduleTimeline
           daysOfWeek={daysOfWeek}
           hours={hours}
@@ -223,12 +185,8 @@ export default function WeeklySchedule({
           refetch={refetch}
           isEditable={isEditable}
           onDeleteRequest={handleDeleteRequest}
-          onTripClick={handleTripClick}
         />
-        <WeeklyScheduleFooter
-          tripCount={filteredEntries.length}
-          isEditable={isEditable}
-        />
+        <WeeklyScheduleFooter tripCount={filteredEntries.length} isEditable={isEditable} />
       </div>
 
       {isEditable && (
@@ -237,12 +195,21 @@ export default function WeeklySchedule({
             isOpen={isAddModalOpen}
             onClose={() => setIsAddModalOpen(false)}
             onSave={async (data) => {
-              await createPlannerTrip(data as any);
+            try {
+              await createPlannerTrip(data as CreateLigneServiceDTO);
               toast.success("Créneau ajouté !");
               setIsAddModalOpen(false);
               refetch();
-            }}
+            } catch (error: any) {
+              if (error?.response?.status === 409) {
+                toast.error("Ce créneau existe déjà pour cette agence.");
+              } else {
+                toast.error("Erreur lors de l'ajout du créneau.");
+              }
+            }
+          }}
             agencyId={agencyId}
+            classes={classes} 
           />
           <ConfirmActionModal
             isOpen={isDeleteModalOpen}

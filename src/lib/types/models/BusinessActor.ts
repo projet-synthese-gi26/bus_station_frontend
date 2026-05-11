@@ -9,7 +9,7 @@ export interface BusinessActor {
   created_by: string;
   updated_by: string;
   id: string;
-  email: string; // Corrigé de "" à string
+  email: string;
   friendly_name: string;
   secondary_email: string;
   date_of_birth: string;
@@ -39,13 +39,32 @@ export interface Customer {
   username: string;
   phone_number: string;
   role: string[];
-  avatar?: string; // Ajout optionnel pour la photo de profil
-  age: number;
+  avatar?: string;
+  age?: number;
 }
 
-// Renommé pour plus de clarté, car c'est la réponse du login
+// Gardé pour compatibilité avec l'ancien endpoint (ne plus utiliser)
 export interface LoginResponseDTO extends Customer {
   token: string;
 }
 
+// Réponse du nouveau POST /auth/login
+export interface AuthTokensDTO {
+  accessToken: string;
+  refreshToken: string;
+  expiresIn: number;
+  user: {
+    userId: string;
+    token: string;
+    email: string;
+    username: string;
+    role: string[];
+    last_name: string;
+    first_name: string;
+    phone_number: string;
+  };
+}
 
+export interface LoginResponseDTO extends Customer {
+  token: string;
+}

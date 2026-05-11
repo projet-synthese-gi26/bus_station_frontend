@@ -13,8 +13,8 @@ export interface TravellerInfosFormProps {
 }
 
 const genderOptions = [
-    { label: "Homme", value: "Male" },
-    { label: "Femme", value: "Female" }
+    { label: "Homme", value: "MALE" },
+    { label: "Femme", value: "FEMALE" }
 ];
 
 export default function TravellerInfosForm({seatNumber, index, register, errors}: TravellerInfosFormProps): JSX.Element
@@ -33,7 +33,7 @@ export default function TravellerInfosForm({seatNumber, index, register, errors}
             <div className="space-y-4">
                 {/* Nom et Genre */}
                 <div className="flex flex-row space-x-4">
-                    <div className="flex-grow">
+                    <div className="grow">
                         <InputField
                             id={`nom-${seatNumber}`}
                             name={`passengers.${index}.nom`}

@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-const allowedGenders = ["Male", "Female"] as const;
+const allowedGenders = ["MALE", "FEMALE"] as const;
 export const passengerSchema = z.object({
     nom: z.string().min(2, "Le nom complet est requis"),
     genre: z.enum(allowedGenders, {

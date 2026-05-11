@@ -47,7 +47,7 @@ import {
   createBrouillon,
   updateBrouillon,
 } from "@/lib/services/voyage-brouillon-service";
-import { getPlannerTripsByAgencyId } from "@/lib/services/planner-trip-service";
+import { getLignesByAgencyId } from "@/lib/services/planner-trip-service";
 import type { VoyageBrouillon } from "@/lib/types/voyage.types";
 import type { LigneService } from "@/lib/types/ligne-service.types";
 
@@ -245,7 +245,7 @@ export function useTripPlanner() {
             if (!brouillon) return;
             form.reset({
               titre: brouillon.titre,
-              description: brouillon.notes ?? "",
+              description: brouillon.notes ?? "Aucune description fournie",
               lieuDepart: brouillon.lieuDepart ?? "",
               pointDeDepart: brouillon.pointDeDepart ?? "",
               lieuArrive: brouillon.lieuArrive ?? "",
@@ -275,7 +275,7 @@ export function useTripPlanner() {
         // ── Mode FROM-LIGNE — pré-remplir depuis une LigneService ───────
         if (isFromLigneMode && fromLigneId) {
           try {
-            const lignes = await getPlannerTripsByAgencyId(agency.agencyId);
+            const lignes = await getLignesByAgencyId(agency.agencyId);
             const ligne = lignes.find((l) => l.id === fromLigneId) as
               | LigneService
               | undefined;
@@ -284,14 +284,14 @@ export function useTripPlanner() {
               const dateDep = prefillDate ?? "";
               form.reset({
                 titre: `${ligne.lieuDepart} → ${ligne.lieuArrive}`,
-                description: ligne.description ?? "",
+                description: ligne.description ?? "Aucune description fournie",
                 lieuDepart: ligne.lieuDepart,
                 pointDeDepart: ligne.pointDeDepart ?? "",
                 lieuArrive: ligne.lieuArrive,
                 pointArrivee: ligne.pointArrivee ?? "",
                 dateDepartPrev: dateDep,
-                heureDepartEffectif: ligne.heureDepart,
-                heureArrive: ligne.heureArrivee,
+                heureDepartEffectif: ligne.heureDepart?? undefined,
+                heureArrive: ligne.heureArrivee ?? "",
                 classVoyageId: ligne.classVoyageId ?? undefined,
                 agenceVoyageId: agency.agencyId,
                 // Les ressources par défaut de l'agence seront pré-sélectionnées
@@ -322,7 +322,7 @@ export function useTripPlanner() {
     setFormApiError(null);
 
     const { nbrPlaceReservable, ...restOfData } = data;
-    const payload: VoyageCreateRequestDTO = {
+    const payload: Partial<VoyageCreateRequestDTO> = {
       ...restOfData,
       nbrPlaceReservable,
       nbrPlaceRestante: nbrPlaceReservable,
@@ -332,22 +332,21 @@ export function useTripPlanner() {
         data.dateDepartPrev,
         data.heureDepartEffectif,
       ),
+      dateLimiteReservation: `${data.dateLimiteReservation}T00:00:00`,
+      dateLimiteConfirmation: `${data.dateLimiteConfirmation}T00:00:00`,
       nbrPlaceConfirm: 0,
       nbrPlaceReserve: 0,
     };
 
     try {
       if (editingTripId) {
-        await updateTrip(editingTripId, payload);
+        await updateTrip(editingTripId, payload as VoyageCreateRequestDTO);
         setSuccessMessage("Voyage mis à jour avec succès !");
       } else {
-        await createTrip(payload);
+        await createTrip(payload as VoyageCreateRequestDTO);
         setSuccessMessage("Voyage créé avec succès !");
-        // Si on publie depuis un brouillon, l'archiver
         if (currentDraftId) {
-          await updateBrouillon(currentDraftId, {
-            statutBrouillon: "CONVERTI",
-          });
+          await updateBrouillon(currentDraftId, { statutBrouillon: "CONVERTI" });
         }
       }
       setIsSuccess(true);
@@ -405,7 +404,7 @@ export function useTripPlanner() {
           ? new Date(`${data.dateLimiteConfirmation}T23:59:00`).toISOString()
           : null,
         statutBrouillon: statut as any,
-        notes: data.description ?? null,
+        notes: data.description ?? "Aucune description fournie",
       };
 
       if (currentDraftId) {

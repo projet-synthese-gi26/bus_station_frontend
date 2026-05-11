@@ -61,7 +61,7 @@ export default function TripListItem({ reservationDetails, onPayment, onCancel, 
         <div className="bg-gray-100 rounded-lg border border-gray-100 p-4 hover:shadow-sm transition-all duration-200">
             <div className="flex items-center gap-4">
                 {/* Image */}
-                <div className="relative w-16 h-16 rounded-lg overflow-hidden flex-shrink-0">
+                <div className="relative w-16 h-16 rounded-lg overflow-hidden shrink-0">
                     <Image
                         src={tripDetails?.bigImage || "/placeholder.svg"}
                         alt="Trip"

@@ -1,21 +1,18 @@
 /**
  * voyage-mutations.service.ts
- * Toutes les mutations pour P-20 : créer/modifier brouillon et voyage.
  */
 
 import apiClient from "@/lib/api/api-client";
 
-// ── DTOs envoyés au backend ───────────────────────────────────────────────────
-
 export interface BrouillonCreateDTO {
   agenceVoyageId: string;
   titre: string;
-  description: string | null; // Changé : obligatoire d'envoyer soit string soit null
+  description: string | null;
   lieuDepart: string;
   lieuArrive: string;
   pointDeDepart: string | null;
   pointArrivee: string | null;
-  dateDepartPrev: string | null; 
+  dateDepartPrev: string | null;
   heureDepartEffectif: string | null;
   heureArrive: string | null;
   dureeEstimee: string | null;
@@ -31,6 +28,7 @@ export interface BrouillonCreateDTO {
   dateLimiteConfirmation: string | null;
   notes: string | null;
   ligneServiceId: string | null;
+  statutBrouillon?: string; // INCOMPLET | PRET | CONVERTI | ANNULE
 }
 
 export type BrouillonUpdateDTO = Partial<BrouillonCreateDTO>;
@@ -38,14 +36,14 @@ export type BrouillonUpdateDTO = Partial<BrouillonCreateDTO>;
 export interface VoyageCreateDTO {
   titre: string;
   description: string;
-  dateDepartPrev: string;      // ISO 8601
+  dateDepartPrev: string;
   lieuDepart: string;
   lieuArrive: string;
-  heureArrive: string;        // ISO 8601
+  heureArrive: string;
   pointDeDepart: string;
   pointArrivee: string;
   nbrPlaceReservable: number;
-  heureDepartEffectif?: string; // ISO 8601
+  heureDepartEffectif?: string;
   nbrPlaceReserve: number;
   nbrPlaceConfirm: number;
   statusVoyage: "EN_ATTENTE" | "PUBLIE" | "EN_COURS" | "TERMINE" | "ANNULE";
@@ -54,16 +52,14 @@ export interface VoyageCreateDTO {
   dateLimiteConfirmation: string;
   smallImage?: string | null;
   bigImage?: string | null;
-  chauffeurId: string;         // UUID
-  vehiculeId: string;          // UUID
-  classVoyageId: string;       // UUID
-  agenceVoyageId: string;      // UUID
+  chauffeurId: string;
+  vehiculeId: string;
+  classVoyageId: string;
+  agenceVoyageId: string;
   amenities: string[] | null;
 }
 
 export type VoyageUpdateDTO = Partial<VoyageCreateDTO>;
-
-// ── Résultat générique ────────────────────────────────────────────────────────
 
 export interface MutationResult<T = unknown> {
   success: boolean;
@@ -71,23 +67,15 @@ export interface MutationResult<T = unknown> {
   error?: string;
 }
 
-// ── Helper de Nettoyage (CORRECTION) ──────────────────────────────────────────
-/**
- * Transforme les chaînes vides ("") en `null`.
- * Cela empêche Spring Boot de crasher (HttpMessageNotReadableException)
- * lorsqu'il essaie de parser "" en UUID, LocalDate ou Integer.
- */
-function cleanPayload<T extends Record<string, any>>(payload: T): T {
-  const cleaned = { ...payload };
+function cleanPayload<T extends object>(payload: T): T {
+  const cleaned = { ...payload } as Record<string, unknown>;
   for (const key in cleaned) {
     if (cleaned[key] === "") {
-      cleaned[key] = null as any;
+      cleaned[key] = null;
     }
   }
-  return cleaned;
+  return cleaned as T;
 }
-
-// ── Brouillon ─────────────────────────────────────────────────────────────────
 
 export async function createBrouillon(
   payload: BrouillonCreateDTO,
@@ -116,28 +104,24 @@ export async function updateBrouillon(
   }
 }
 
-/** Convertir un brouillon PRET en Voyage publié */
 export async function publierBrouillon(id: string): Promise<MutationResult> {
   try {
     const res = await apiClient.post(`/voyage/brouillon/${id}/publier`);
     return { success: true, data: res.data };
   } catch (err: unknown) {
     const msg = extractErrorMessage(err);
-    console.error(
-      "[voyage-mutations] POST /voyage/brouillon/{id}/publier failed:",
-      msg,
-    );
+    console.error("[voyage-mutations] POST /voyage/brouillon/{id}/publier failed:", msg);
     return { success: false, error: msg };
   }
 }
 
-// ── Voyage ────────────────────────────────────────────────────────────────────
-
 export async function createVoyage(
-  payload: VoyageCreateDTO,
+  payload: VoyageCreateDTO & { prix?: unknown },
 ): Promise<MutationResult> {
   try {
-    const res = await apiClient.post("/voyage", cleanPayload(payload));
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { prix: _prix, ...safePayload } = payload;
+    const res = await apiClient.post("/voyage", cleanPayload(safePayload as VoyageCreateDTO));
     return { success: true, data: res.data };
   } catch (err: unknown) {
     const msg = extractErrorMessage(err);
@@ -146,12 +130,15 @@ export async function createVoyage(
   }
 }
 
+// APRÈS
 export async function updateVoyage(
   id: string,
-  payload: VoyageUpdateDTO,
+  payload: VoyageUpdateDTO & { prix?: unknown },
 ): Promise<MutationResult> {
   try {
-    const res = await apiClient.put(`/voyage/${id}`, cleanPayload(payload));
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { prix: _prix, ...safePayload } = payload;
+    const res = await apiClient.put(`/voyage/${id}`, cleanPayload(safePayload as VoyageUpdateDTO));
     return { success: true, data: res.data };
   } catch (err: unknown) {
     const msg = extractErrorMessage(err);
@@ -170,8 +157,6 @@ export async function publierVoyage(id: string): Promise<MutationResult> {
     return { success: false, error: msg };
   }
 }
-
-// ── Helpers ───────────────────────────────────────────────────────────────────
 
 function extractErrorMessage(err: unknown): string {
   if (err && typeof err === "object") {

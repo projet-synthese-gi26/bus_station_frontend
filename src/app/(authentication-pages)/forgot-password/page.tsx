@@ -35,7 +35,7 @@ export default function ForgotPasswordPage() {
       const result = await forgotPassword(email);
       setIsSubmitted(true);
       // En DEV : le backend retourne le token en clair pour faciliter les tests
-      if (result.token) {
+      if (result?.token) {
         setDevToken(result.token);
       }
     } catch (err: unknown) {
@@ -54,7 +54,7 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white py-12 px-4 sm:px-6 lg:px-8 flex flex-col items-center justify-center">
+    <div className="min-h-screen bg-linear-to-br from-blue-50 to-white py-12 px-4 sm:px-6 lg:px-8 flex flex-col items-center justify-center">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}

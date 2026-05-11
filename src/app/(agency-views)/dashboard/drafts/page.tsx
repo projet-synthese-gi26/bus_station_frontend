@@ -350,7 +350,7 @@ export default function DraftsPage() {
 
       {/* ─── KPIs ────────────────────────────────────────────────────────── */}
       <div className="grid grid-cols-3 gap-3">
-        <div className="bg-gradient-to-br from-gray-50 to-white border border-gray-100 rounded-2xl p-4">
+        <div className="bg-linear-to-br from-gray-50 to-white border border-gray-100 rounded-2xl p-4">
           <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">
             Total
           </p>
@@ -358,7 +358,7 @@ export default function DraftsPage() {
             {compteurs.total}
           </p>
         </div>
-        <div className="bg-gradient-to-br from-orange-50 to-white border border-orange-100 rounded-2xl p-4">
+        <div className="bg-linear-to-br from-orange-50 to-white border border-orange-100 rounded-2xl p-4">
           <p className="text-xs text-orange-600 font-medium uppercase tracking-wider">
             À compléter
           </p>
@@ -366,7 +366,7 @@ export default function DraftsPage() {
             {compteurs.incomplet}
           </p>
         </div>
-        <div className="bg-gradient-to-br from-green-50 to-white border border-green-100 rounded-2xl p-4">
+        <div className="bg-linear-to-br from-green-50 to-white border border-green-100 rounded-2xl p-4">
           <p className="text-xs text-green-600 font-medium uppercase tracking-wider">
             Prêts
           </p>

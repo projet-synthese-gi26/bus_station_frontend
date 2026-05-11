@@ -20,30 +20,30 @@ export type JourSemaine =
 
 export interface LigneService {
   id: string;
-  agenceVoyageId: string;
+  nom: string;
   lieuDepart: string;
   lieuArrive: string;
-  pointDeDepart?: string | null;
-  pointArrivee?: string | null;
-  heureDepart: string; // "HH:mm"
-  heureArrivee: string; // "HH:mm"
+  heureDepart: string | null;
+  heureArrivee: string | null;
   joursOperation: JourSemaine[];
+  agenceVoyageId: string;
   classVoyageId?: string | null;
-  nomClasse?: string | null; // dénormalisé pour affichage rapide
-  prix?: number | null;
-  dureeEstimee?: string | null;
+  nomClasse?: string | null;
+  vehiculeId?: string | null;
   actif: boolean;
   description?: string | null;
+  pointDeDepart?: string | null;
+  pointArrivee?: string | null;
+  prix?: number | null;
+  dureeEstimee?: string | null;
   createdAt?: string;
   updatedAt?: string;
 }
 
+
 // ── DTOs ──────────────────────────────────────────────────────────────────────
 
-export type CreateLigneServiceDTO = Omit<
-  LigneService,
-  "id" | "createdAt" | "updatedAt"
->;
+export type CreateLigneServiceDTO = Omit<LigneService, "id" | "createdAt" | "updatedAt">;
 export type UpdateLigneServiceDTO = Partial<CreateLigneServiceDTO>;
 
 // ── Génération unitaire depuis une LigneService ───────────────────────────────

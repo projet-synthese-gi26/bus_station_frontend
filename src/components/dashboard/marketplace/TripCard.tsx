@@ -45,11 +45,15 @@ export default function TripCard({
                 <Image
                     width={400}
                     height={300}
-                    src={trip.bigImage || "/placeholder.svg"}
+                    src={
+                        trip.bigImage && (trip.bigImage.startsWith("/") || trip.bigImage.startsWith("http"))
+                            ? trip.bigImage
+                            : "/placeholder.png"
+                    }
                     alt={`${trip.titre} trip`}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
+                <div className="absolute inset-0 bg-linear-to-t from-black/20 to-transparent"></div>
                 <div className="absolute top-4 right-4">
                     <StatusBadge status={trip.statusVoyage || 'PUBLIE'} />
                 </div>
@@ -78,7 +82,7 @@ export default function TripCard({
                 {/* Informations détaillées */}
                 <div className="space-y-3 mb-6 ml-2">
                     <div className="flex items-start gap-3">
-                        <div className="w-7 h-7 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
+                        <div className="w-7 h-7 rounded-full bg-blue-100 flex items-center justify-center shrink-0">
                             <Calendar className="h-4 w-4 text-blue-600"/>
                         </div>
                         <div>

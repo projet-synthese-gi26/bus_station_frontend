@@ -35,6 +35,7 @@ interface LigneServiceModalProps {
 }
 
 const EMPTY: Omit<CreateLigneServiceDTO, "agenceVoyageId"> = {
+  nom: "",
   lieuDepart: "",
   lieuArrive: "",
   pointDeDepart: "",
@@ -66,12 +67,13 @@ export default function LigneServiceModal({
     if (isOpen) {
       if (initial) {
         setForm({
+          nom: initial.nom,
           lieuDepart: initial.lieuDepart,
           lieuArrive: initial.lieuArrive,
           pointDeDepart: initial.pointDeDepart ?? "",
           pointArrivee: initial.pointArrivee ?? "",
-          heureDepart: initial.heureDepart,
-          heureArrivee: initial.heureArrivee,
+          heureDepart: initial.heureDepart ?? "08:00",
+          heureArrivee: initial.heureArrivee ?? "",
           joursOperation: initial.joursOperation,
           classVoyageId: initial.classVoyageId ?? null,
           nomClasse: initial.nomClasse ?? null,
@@ -104,6 +106,7 @@ export default function LigneServiceModal({
     if (!form.lieuArrive.trim()) e.lieuArrive = "Requis";
     if (!form.heureDepart) e.heureDepart = "Requis";
     if (!form.heureArrivee) e.heureArrivee = "Requis";
+    if (!form.classVoyageId) e.classVoyageId = "Sélectionnez une classe de voyage";
     if (form.joursOperation.length === 0)
       e.jours = "Sélectionnez au moins un jour";
     setErrors(e);
@@ -121,7 +124,7 @@ export default function LigneServiceModal({
         ...form,
         agenceVoyageId,
         nomClasse: selectedClass?.nom ?? form.nomClasse,
-        prix: form.prix ?? (selectedClass ? Number(selectedClass.prix) : null),
+        prix: form.prix ?? null,
       });
       onClose();
     } finally {
@@ -224,7 +227,7 @@ export default function LigneServiceModal({
               </label>
               <input
                 type="time"
-                value={form.heureDepart}
+                value={form.heureDepart ?? ""}
                 onChange={(e) => set("heureDepart", e.target.value)}
                 className={inputCls(errors.heureDepart)}
               />
@@ -235,7 +238,7 @@ export default function LigneServiceModal({
               </label>
               <input
                 type="time"
-                value={form.heureArrivee}
+                value={form.heureArrivee ?? ""}
                 onChange={(e) => set("heureArrivee", e.target.value)}
                 className={inputCls(errors.heureArrivee)}
               />
@@ -280,13 +283,20 @@ export default function LigneServiceModal({
                 className={inputCls()}
               >
                 <option value="">— Sans classe —</option>
-                {classes.map((c) => (
-                  <option key={c.idClassVoyage} value={c.idClassVoyage}>
-                    {c.nom}
-                  </option>
-                ))}
+                {classes.map((c) => {
+                  const classId = (c as any).id ?? c.idClassVoyage ?? "";
+                  return (
+                    <option key={classId || c.nom} value={classId}>
+                      {c.nom}
+                    </option>
+                  );
+                })}
               </select>
+              {errors.classVoyageId && (
+                <p className="text-red-500 text-xs mt-0.5">{errors.classVoyageId}</p>
+              )}
             </div>
+  
             <div>
               <label className="text-xs font-semibold text-gray-500 uppercase mb-1 block">
                 Prix indicatif (FCFA)

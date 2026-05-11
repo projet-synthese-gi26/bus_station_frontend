@@ -19,7 +19,7 @@ export default function ReservationProcessModal({  onCloseAction, tripDetails, s
 
     return (
         <>
-            <div className="bg-white relative lg:rounded-xl  rounded-xl lg:max-w-5xl md:max-w-[1000px] sm:max-w-[370px] max-w-[330px] lg:h-[90vh] h-[75vh] overflow-y-auto">
+            <div className="bg-white relative lg:rounded-xl  rounded-xl lg:max-w-5xl md:max-w-250 sm:max-w-92.5 max-w-82.5 lg:h-[90vh] h-[75vh] overflow-y-auto">
                 {reservationManager.step === 1 && (
                     <ReservationStep1
                         totalPrice={reservationManager.totalPrice}

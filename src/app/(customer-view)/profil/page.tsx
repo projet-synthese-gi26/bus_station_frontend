@@ -109,8 +109,12 @@ const EditProfileModal = ({
     try {
       // PUT /auth/me — UserDTO partiel
       const updated = await updateUserProfile(data);
-      onUpdate(updated);
-      onClose();
+      if (updated) {
+        onUpdate(updated);
+        onClose();
+      } else {
+        setApiError("Une erreur est survenue lors de la mise à jour.");
+      }
     } catch {
       setApiError("Une erreur est survenue lors de la mise à jour.");
     } finally {
