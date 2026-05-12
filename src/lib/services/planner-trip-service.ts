@@ -17,14 +17,35 @@ const DAY_MAP_EN_TO_FR: Record<string, JourSemaine> = {
   THURSDAY: "JEUDI", FRIDAY: "VENDREDI", SATURDAY: "SAMEDI", SUNDAY: "DIMANCHE",
 };
 
-function localTimeToString(t: { hour: number; minute: number } | null | undefined): string | null {
+// CORRECTION ICI : Accepte les chaînes (ex: "08:30:00"), les tableaux (ex: [8, 30]) ou les objets
+function localTimeToString(t: any): string | null {
   if (!t) return null;
-  return `${String(t.hour).padStart(2, "0")}:${String(t.minute).padStart(2, "0")}`;
+
+  // Si le backend envoie une chaîne "08:30:00"
+  if (typeof t === "string") {
+    const parts = t.split(":");
+    if (parts.length >= 2) {
+      return `${parts[0].padStart(2, "0")}:${parts[1].padStart(2, "0")}`;
+    }
+    return t;
+  }
+
+  // Si le backend envoie un tableau[8, 30]
+  if (Array.isArray(t) && t.length >= 2) {
+    return `${String(t[0]).padStart(2, "0")}:${String(t[1]).padStart(2, "0")}`;
+  }
+
+  // Si c'est un objet avec hour et minute
+  if (typeof t === "object" && t.hour !== undefined && t.minute !== undefined) {
+    return `${String(t.hour).padStart(2, "0")}:${String(t.minute).padStart(2, "0")}`;
+  }
+
+  return "00:00"; // Sécurité par défaut
 }
 
 function toLocalTime(timeStr: string | null | undefined): string | null {
   if (!timeStr) return null;
-  const [hour, minute] = timeStr.split(":").map(Number);
+  const[hour, minute] = timeStr.split(":").map(Number);
   return `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}:00`;
 }
 
@@ -35,7 +56,7 @@ function toBackendPayload(data: CreateLigneServiceDTO) {
     statut: data.actif ? "ACTIF" : "BROUILLON",
     id_agence_voyage: data.agenceVoyageId,
     date_debut: new Date().toISOString().split("T")[0],
-    creneaux: (data.joursOperation ?? []).map((jour) => {
+    creneaux: (data.joursOperation ??[]).map((jour) => {
       const creneau: Record<string, unknown> = {
         lieu_depart: data.lieuDepart,
         lieu_arrive: data.lieuArrive,
@@ -60,8 +81,8 @@ function fromBackend(raw: any): LigneService {
     nom: raw.nom ?? "",
     lieuDepart: first?.lieu_depart ?? "",
     lieuArrive: first?.lieu_arrive ?? "",
-    heureDepart: localTimeToString(first?.heure_depart),
-    heureArrivee: localTimeToString(first?.heure_arrivee),
+    heureDepart: localTimeToString(first?.heure_depart) || "00:00",
+    heureArrivee: localTimeToString(first?.heure_arrivee) || "00:00",
     joursOperation: creneaux.map((c: any) => DAY_MAP_EN_TO_FR[c.jour_semaine] ?? c.jour_semaine),
     agenceVoyageId: raw.id_agence_voyage ?? "",
     classVoyageId: first?.id_class_voyage ?? null,
@@ -78,24 +99,23 @@ export async function getLignesByAgencyId(agencyId: string): Promise<LigneServic
   if (!agencyId) return [];
   try {
     const res: AxiosResponse<any[]> = await axiosInstance.get(`${URL}/agence/${agencyId}`);
-    console.log("[planner-trip-service] GET lignes raw:", JSON.stringify(res.data, null, 2));
-    const mapped = (res.data ?? []).map(fromBackend);
-    console.log("[planner-trip-service] GET lignes mapped:", mapped);
-    return mapped;
+    return (res.data ??[]).map(fromBackend);
   } catch (error) {
     console.error("[planner-trip-service] Erreur récupération lignes:", (error as AxiosError).message);
     throw error;
   }
 }
 
+// La suite des méthodes...
+export const getPlannerTripsByAgencyId = getLignesByAgencyId;
+
 export async function createPlannerTrip(data: CreateLigneServiceDTO): Promise<void> {
   const payload = toBackendPayload(data);
-  console.log("[planner-trip-service] Payload envoyé →", JSON.stringify(payload, null, 2));
   try {
     await axiosInstance.post(URL, payload);
   } catch (error) {
     const axErr = error as AxiosError;
-    console.error("[planner-trip-service] Erreur création ligne:", JSON.stringify(axErr.response?.data) ?? axErr.message);
+    console.error("[planner-trip-service] Erreur création ligne:", axErr.response?.data ?? axErr.message);
     throw error;
   }
 }

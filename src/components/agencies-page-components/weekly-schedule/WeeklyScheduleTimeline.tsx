@@ -1,4 +1,3 @@
-// src/components/agencies-page-components/weekly-schedule/WeeklyScheduleTimeline.tsx
 "use client";
 
 import React, { useRef, useCallback } from "react";
@@ -21,17 +20,20 @@ interface WeeklyScheduleTimelineProps {
   onTripClick?: (entryId: string) => void;
 }
 
-const categoryColors: { [key: string]: { bg: string; border: string } } = {
-  VIP: { bg: "bg-purple-500", border: "border-purple-700" },
-  Classic: { bg: "bg-blue-500", border: "border-blue-700" },
-  Premium: { bg: "bg-yellow-500", border: "border-yellow-700" },
-  Nocturne: { bg: "bg-indigo-800", border: "border-indigo-900" },
-};
-
+// Couleurs plus robustes
 const getCategoryColor = (category: string) => {
-  return (
-    categoryColors[category] || { bg: "bg-gray-400", border: "border-gray-600" }
-  );
+  const cat = (category || "Standard").toLowerCase();
+  if (cat.includes("vip") || cat.includes("premium")) 
+    return { bg: "bg-purple-500", border: "border-purple-700" };
+  if (cat.includes("classique") || cat.includes("classic")) 
+    return { bg: "bg-blue-500", border: "border-blue-700" };
+  if (cat.includes("nuit") || cat.includes("nocturne")) 
+    return { bg: "bg-indigo-800", border: "border-indigo-900" };
+  if (cat.includes("eco")) 
+    return { bg: "bg-green-500", border: "border-green-700" };
+  
+  // Par défaut
+  return { bg: "bg-cyan-600", border: "border-cyan-800" };
 };
 
 const timeToMinutes = (time: string): number => {
@@ -41,8 +43,10 @@ const timeToMinutes = (time: string): number => {
 };
 
 const minutesToTime = (minutes: number): string => {
-  const h = Math.floor(minutes / 60);
-  const m = minutes % 60;
+  // Gère les débordements de minuit (ex: 25h = 01h)
+  const safeMinutes = (minutes + 24 * 60) % (24 * 60);
+  const h = Math.floor(safeMinutes / 60);
+  const m = safeMinutes % 60;
   return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
 };
 
@@ -61,47 +65,67 @@ function DayRow({
   onTripClick,
 }: any) {
   const { setNodeRef, isOver } = useDroppable({ id: `day-${dayIndex + 1}` });
+  
   return (
     <div
       ref={setNodeRef}
-      className="flex items-start border-t border-gray-200 relative"
+      className="flex items-start relative group"
       style={{ minHeight: `${rowHeight}rem` }}
     >
       {isOver && isEditable && (
-        <div className="absolute inset-0 bg-primary/10 z-0" />
+        <div className="absolute inset-0 bg-blue-50/50 border-2 border-dashed border-blue-400 rounded-lg z-0" />
       )}
-      <div className="w-28 shrink-0 pr-4 text-right font-bold text-gray-600 pt-3 text-sm sticky left-0 bg-white/80 backdrop-blur-sm z-10">
-        {day}
+      
+      {/* Label du jour */}
+      <div className="w-24 shrink-0 pr-3 text-right sticky left-0 z-10 pt-3 bg-white/90 backdrop-blur-sm">
+        <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">
+          {day.slice(0, 3)}
+        </span>
+        <div className="text-[10px] text-gray-400 font-medium">{day.slice(3)}</div>
       </div>
-      <div className="relative w-full h-full">
+      
+      {/* Zone timeline */}
+      <div className="relative flex-1 min-w-0 h-full">
+        {/* Lignes verticales des heures */}
         {hours.slice(0, -1).map((_: any, hourIndex: number) => (
           <div
-            key={`line-${hourIndex}`}
-            className="absolute h-full border-l border-gray-200/70"
+            key={`band-${hourIndex}`}
+            className="absolute top-0 h-full border-l border-gray-100"
             style={{
-              left: `${((hourIndex + 1) / hours.length) * 100}%`,
-              top: 0,
+              left: `${(hourIndex / hours.length) * 100}%`,
+              width: `${(1 / hours.length) * 100}%`,
+              backgroundColor: hourIndex % 2 === 0 ? "rgba(248, 250, 252, 0.5)" : "transparent"
             }}
           />
         ))}
+        
+        {/* Affichage des blocs de voyage */}
         {schedule &&
           schedule.map((lane: PlannerEntry[], laneIndex: number) => (
             <React.Fragment key={laneIndex}>
               {lane.map((trip: PlannerEntry) => {
                 const colors = getCategoryColor(trip.category);
-                const startPercent =
-                  (timeToMinutes(trip.startTime) / totalMinutesInDay) * 100;
-                const widthPercent =
-                  ((timeToMinutes(trip.endTime) -
-                    timeToMinutes(trip.startTime)) /
-                    totalMinutesInDay) *
-                  100;
+                
+                const startMins = timeToMinutes(trip.startTime);
+                let endMins = timeToMinutes(trip.endTime);
+                
+                // Si l'arrivée est avant le départ, c'est que ça traverse minuit
+                if (endMins <= startMins && endMins !== 0) {
+                  endMins += 24 * 60; 
+                }
+
+                // Calculs en % par rapport à la largeur de la div parent (24h)
+                const startPercent = (startMins / totalMinutesInDay) * 100;
+                const widthPercent = ((endMins - startMins) / totalMinutesInDay) * 100;
+                
                 const style = {
                   left: `${startPercent}%`,
-                  width: `${widthPercent}%`,
-                  top: `${laneIndex * (tripHeightRem + tripGapRem)}rem`,
+                  // Largeur minimum pour que le bloc soit toujours visible et cliquable (ex: 3% ≈ 45 min visuelles)
+                  width: `${Math.max(widthPercent, 3)}%`, 
+                  top: `${laneIndex * (tripHeightRem + tripGapRem) + 0.25}rem`,
                   height: `${tripHeightRem}rem`,
                 };
+                
                 return (
                   <DraggableTrip
                     key={trip.id}
@@ -110,7 +134,7 @@ function DayRow({
                     colors={colors}
                     isEditable={isEditable}
                     onDelete={onDeleteRequest}
-                    onTripClick={onTripClick}
+                    onTripClick={onTripClick!}
                   />
                 );
               })}
@@ -141,30 +165,22 @@ export default function WeeklyScheduleTimeline({
     if (!over || !timelineRef.current) return;
 
     const trip = active.data.current as PlannerEntry;
-    const tripDuration =
-      timeToMinutes(trip.endTime) - timeToMinutes(trip.startTime);
+    
+    let startMins = timeToMinutes(trip.startTime);
+    let endMins = timeToMinutes(trip.endTime);
+    if (endMins <= startMins) endMins += 24 * 60;
+    const tripDuration = endMins - startMins;
 
-    // Calculate new day
     const newDayOfWeek = Number(String(over.id).replace("day-", ""));
 
-    // Calculate new time
     const timelineWidth = timelineRef.current.offsetWidth;
-    const safeTimelineWidth =
-      timelineWidth > 0 ? timelineWidth : window.innerWidth * 0.7;
-    const pixelsPerMinute = safeTimelineWidth / totalMinutesInDay;
+    const pixelsPerMinute = timelineWidth / totalMinutesInDay;
 
-    const currentTripStartTimeMinutes = timeToMinutes(trip.startTime);
-    const newStartMinutes =
-      Math.round(
-        (currentTripStartTimeMinutes + delta.x / pixelsPerMinute) / 5,
-      ) * 5;
+    const newStartMinutes = Math.round((startMins + delta.x / pixelsPerMinute) / 15) * 15; // Snap aux 15 mins
 
     const newStartTime = minutesToTime(Math.max(0, newStartMinutes));
-    const newEndTime = minutesToTime(
-      Math.min(totalMinutesInDay, newStartMinutes + tripDuration),
-    );
+    const newEndTime = minutesToTime(newStartMinutes + tripDuration);
 
-    // Prevent update if position hasn't actually changed significantly
     if (
       newDayOfWeek === trip.dayOfWeek &&
       newStartTime === trip.startTime &&
@@ -173,60 +189,56 @@ export default function WeeklyScheduleTimeline({
       return;
     }
 
-    // updatePlannerTrip attend (id: string, data: UpdateLigneServiceDTO)
-    // On envoie un cast en `any` car la structure UpdateLigneServiceDTO ne matche pas
-    // exactement avec dayOfWeek/startTime/endTime — c'est l'adaptateur qui s'en charge.
     const updatedTrip: any = {
       dayOfWeek: newDayOfWeek,
       startTime: newStartTime,
       endTime: newEndTime,
     };
 
-    toast.loading("Mise à jour du voyage...");
+    toast.loading("Mise à jour du créneau...", { id: "update-trip" });
     try {
-      // trip.id est string, ce qui correspond à updatePlannerTrip(id: string, ...)
-      await updatePlannerTrip(trip.id, updatedTrip);
-      toast.dismiss();
-      toast.success("Planning mis à jour!");
+      // Le trip.id ici est "{ligneId}-{JOUR}", on doit extraire le vrai LigneId
+      const ligneId = trip.id.split('-').slice(0, -1).join('-');
+      await updatePlannerTrip(ligneId, updatedTrip);
+      toast.success("Planning mis à jour!", { id: "update-trip" });
       refetch();
     } catch (error) {
-      toast.dismiss();
-      toast.error("Impossible de mettre à jour le voyage.");
+      toast.error("Impossible de mettre à jour le créneau.", { id: "update-trip" });
     }
   };
 
   const handleTripClick = useCallback(
     (tripId: string) => {
-      router.push(`/market-place/trip/${tripId}`);
+      // Sur le dashboard, on veut générer un voyage unitaire
+      if (onTripClick) onTripClick(tripId);
     },
-    [router],
+    [onTripClick],
   );
 
   return (
-    <div className="hidden md:block p-4 overflow-x-auto">
+    <div className="hidden md:block px-4 pb-8 overflow-x-auto">
       <DndContext onDragEnd={isEditable ? handleDragEnd : undefined}>
-        <div
-          className="relative"
-          style={{ minWidth: `${hours.length * 3.5}rem` }}
-        >
-          <div className="flex h-10 items-center">
-            <div className="w-28 shrink-0" />
+        {/* On force une largeur min pour éviter l'écrasement sur petits écrans */}
+        <div className="relative min-w-200 lg:min-w-full">
+          {/* Header heures */}
+          <div className="flex h-8 items-center border-b border-gray-200 mb-2">
+            <div className="w-24 shrink-0" />
             {hours.map((hour) => (
-              <div
-                key={hour}
-                className="w-14 text-center text-xs text-gray-500 shrink-0"
-              >
+              <div key={hour} className="flex-1 text-center text-xs font-bold text-gray-400">
                 {hour}
               </div>
             ))}
           </div>
-          <div className="relative" ref={timelineRef}>
+          
+          {/* Rows */}
+          <div className="relative divide-y divide-gray-100" ref={timelineRef}>
             {daysOfWeek.map((day, dayIndex) => {
-              const rowHeight =
-                maxOverlapsPerDay[dayIndex] > 0
-                  ? maxOverlapsPerDay[dayIndex] * (tripHeightRem + tripGapRem) +
-                    tripGapRem
-                  : 4;
+              // Calculer la hauteur de la ligne selon le nb de voyages superposés
+              const overlaps = maxOverlapsPerDay[dayIndex] || 0;
+              const rowHeight = overlaps > 0
+                ? overlaps * (tripHeightRem + tripGapRem) + 0.5
+                : 3.5;
+                
               return (
                 <DayRow
                   key={day}
