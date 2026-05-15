@@ -32,6 +32,7 @@ import type {
   ReservationCancelDTO,
 } from "@/lib/types/generated-api";
 import type { ReservationDetails } from "@/lib/types/models/Reservation";
+import axiosInstance from "@/lib/services/axios-services/axiosInstance";
 
 // ── Types locaux pour le paiement ─────────────────────────────────────────────
 
@@ -140,11 +141,22 @@ export async function createReservation(
   data: ReservationDTO,
 ): Promise<ReservationDetails | null> {
   try {
-    const res = await apiClient.post("/reservation/reserver", data);
-    return res.data as ReservationDetails;
-  } catch (err) {
-    console.error("[reservation-service] POST /reservation/reserver failed");
-    throw err; // on relance pour que les hooks puissent afficher l'erreur
+    const res = await axiosInstance.post("/reservation/reserver", data);
+    const body = res.data;
+    if (!body) return null;
+    // Si le backend retourne une Reservation à plat (sans wrapper ReservationDetailDTO)
+    if (body.idReservation && !body.reservation) {
+      return { reservation: body } as ReservationDetails;
+    }
+    return body as ReservationDetails;
+  } catch (err: any) {
+    const status = err?.response?.status;
+    if (status === 401) {
+      console.warn("[reservation-service] Session expirée — reconnexion requise");
+    } else {
+      console.error("[reservation-service] POST /reservation/reserver failed", err?.response?.data);
+    }
+    throw err;
   }
 }
 

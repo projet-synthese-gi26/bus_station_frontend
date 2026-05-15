@@ -40,6 +40,7 @@ export default function SimilarTrips({ voyageId }: SimilarTripsProps) {
                 alt={`${trip.lieuDepart} → ${trip.lieuArrive}`}
                 fill
                 className="object-cover group-hover:scale-105 transition-transform duration-500"
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw" 
               />
               <div className="absolute inset-0 bg-linear-to-t from-black/30 to-transparent" />
               <span className="absolute bottom-2 right-2 bg-white/90 text-primary font-bold text-xs px-2 py-1 rounded-lg">

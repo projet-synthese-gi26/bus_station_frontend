@@ -109,30 +109,39 @@ export function useReservation(
       idVoyage: tripDetails.idVoyage,
       passagerDTO: passengersData,
     };
-    console.log(data);
     await createReservation(data)
-      // APRÈS
       .then(async (result): Promise<void> => {
-        const reservation = result?.reservation ?? null;
-        if (reservation) {
-          await saveCreatedReservation(reservation);
-          setReservationSuccessMessage(
-            "🎊🎉 Your reservation has been successfully registered and is awaiting your confirmation.",
-          );
-          onClose();
-          setCanOpenPaymentModal(true);
-        } else {
-          setErrorMessage(
-            "Something went wrong during your reservation, please retry !!",
-          );
+        if (!result) {
+          setErrorMessage("Something went wrong during your reservation, please retry !!");
           setReservationSuccessMessage("");
           setCanOpenPaymentModal(false);
+          return;
         }
-      })
-      .catch((): void => {
-        setErrorMessage(
-          "An error occurred during your booking, please retry !!",
+        const reservation = result.reservation ?? null;
+        if (reservation) {
+          await saveCreatedReservation(reservation);
+        }
+        setReservationSuccessMessage(
+          "🎊🎉 Your reservation has been successfully registered and is awaiting your confirmation.",
         );
+        onClose();
+        setCanOpenPaymentModal(true);
+      })
+      .catch((err: any): void => {
+        if (err?.response?.status === 401) {
+          setErrorMessage(
+            "Votre session a expiré. Veuillez vous reconnecter pour effectuer une réservation.",
+          );
+          localStorage.removeItem("bus_station_token_key");
+          localStorage.removeItem("bus_station_refresh_token");
+          setTimeout(() => {
+            window.location.href = "/login";
+          }, 2500);
+        } else {
+          setErrorMessage(
+            "An error occurred during your booking, please retry !!",
+          );
+        }
         setReservationSuccessMessage("");
         setCanOpenPaymentModal(false);
       })

@@ -16,14 +16,13 @@ function stripConfirmPassword(data: BusinessActorFormType) {
   return rest;
 }
 
-// Correction de createBusinessActor (inscription)
 export async function createBusinessActor(
     data: BusinessActorFormType
 ): Promise<BusinessActor | null> {
     try {
         const dataToSend = stripConfirmPassword(data);
         const apiResponse: AxiosResponse<BusinessActor> = await axiosInstance.post(
-            "/auth/register",   // ← était /utilisateur/inscription
+            "/auth/register",
             dataToSend
         );
         if (apiResponse.status === 201 || apiResponse.status === 200) {
@@ -36,7 +35,6 @@ export async function createBusinessActor(
     }
 }
 
-// Correction de loginBusinessActor (connexion)
 export async function loginBusinessActor(
     data: LoginSchemaType
 ): Promise<AuthTokensDTO | null> {
@@ -57,13 +55,16 @@ export async function loginBusinessActor(
     }
 }
 
-// Correction de getConnectedUser
 export async function getConnectedUser(): Promise<Customer | null> {
     try {
-        const apiResponse: AxiosResponse<Customer> = await axiosInstance.get("/auth/me");  // ← était /utilisateur/profil
+        const apiResponse: AxiosResponse<Customer> = await axiosInstance.get("/auth/me");
         if (apiResponse.status === 200) return apiResponse.data;
         return null;
     } catch (error) {
+        // Token absent, expiré ou invalide → session visiteur normale, pas d'erreur à loguer
+        if (axios.isAxiosError(error) && (error.response?.status === 401 || error.response?.status === 403)) {
+            return null;
+        }
         console.error("Something went wrong when getting the current user", error);
         throw new Error("Something went wrong when getting the current user");
     }

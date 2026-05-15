@@ -2,7 +2,6 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { Client } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 
-// Définir un type pour les mises à jour de siège
 interface SeatUpdate {
     placeNumber: number;
     status: 'RESERVED' | 'FREE';
@@ -10,17 +9,16 @@ interface SeatUpdate {
 
 export function useSeatManager(tripId?: string) {
     const [selectedSeats, setSelectedSeats] = useState<number[]>([]);
-    const [temporaryReservedSeats, setTemporaryReservedSeats] = useState<number[]>([]); // Places réservées via WebSocket
-    const [permanentOccupiedSeats, setPermanentOccupiedSeats] = useState<number[]>([]); // Places définitivement occupées du voyage
+    const [temporaryReservedSeats, setTemporaryReservedSeats] = useState<number[]>([]);
+    const [permanentOccupiedSeats, setPermanentOccupiedSeats] = useState<number[]>([]);
     const [isConnecting, setIsConnecting] = useState(false);
     const [isConnected, setIsConnected] = useState(false);
 
-    // WebSocket refs
     const stompClient = useRef<Client | null>(null);
     const connectionRetries = useRef(0);
     const maxRetries = 3;
+    const wsDisabled = useRef(false);
 
-    // Garder une trace des places que NOUS avons sélectionnées
     const mySelectedSeats = useRef<number[]>([]);
 
     const syncWithServer = useCallback((updates: SeatUpdate[]) => {
@@ -29,12 +27,8 @@ export function useSeatManager(tripId?: string) {
 
         updates.forEach(update => {
             if (mySelectedSeats.current.includes(update.placeNumber)) return;
-
-            if (update.status === 'RESERVED') {
-                reservedByOthers.add(update.placeNumber);
-            } else if (update.status === 'FREE') {
-                freedByOthers.add(update.placeNumber);
-            }
+            if (update.status === 'RESERVED') reservedByOthers.add(update.placeNumber);
+            else if (update.status === 'FREE') freedByOthers.add(update.placeNumber);
         });
 
         setTemporaryReservedSeats(prev => {
@@ -54,13 +48,17 @@ export function useSeatManager(tripId?: string) {
         }
     }, [tripId]);
 
-    // Initialiser WebSocket si tripId est fourni
     useEffect(() => {
-        if (!tripId) return;
+        if (!tripId || wsDisabled.current) return;
+
+        const WS_BASE = process.env.NEXT_PUBLIC_TRIP_AGENCY_BACKEND_API_URL ?? "https://traefikdev.yowyob.com/bus-station";
 
         const connectWebSocket = () => {
+            const token = typeof window !== "undefined" ? localStorage.getItem("bus_station_token_key") : null;
+            const wsUrl = token ? `${WS_BASE}/ws?token=${encodeURIComponent(token)}` : `${WS_BASE}/ws`;
+
             const client = new Client({
-                webSocketFactory: () => new SockJS("https://agence-voyage.ddns.net/api/ws"),
+                webSocketFactory: () => new SockJS(wsUrl),
                 onConnect: () => {
                     setIsConnected(true);
                     setIsConnecting(false);
@@ -68,26 +66,22 @@ export function useSeatManager(tripId?: string) {
 
                     client.subscribe(`/topic/voyage.${tripId}`, (message) => {
                         const updates = JSON.parse(message.body);
-                        if (Array.isArray(updates)) {
-                            syncWithServer(updates);
-                        }
+                        if (Array.isArray(updates)) syncWithServer(updates);
                     });
 
                     setTimeout(() => requestInitialState(), 500);
                 },
-                onStompError: (error) => {
-                    console.error('WebSocket error:', error);
+                onStompError: () => {
                     setIsConnected(false);
                     setIsConnecting(false);
                     handleReconnection();
                 },
-                onWebSocketError: (error) => {
-                    console.error('WebSocket connection error:', error);
+                onWebSocketError: () => {
                     setIsConnected(false);
                     setIsConnecting(false);
                     handleReconnection();
                 },
-                reconnectDelay: 5000,
+                reconnectDelay: 0,
                 heartbeatIncoming: 4000,
                 heartbeatOutgoing: 4000
             });
@@ -104,7 +98,7 @@ export function useSeatManager(tripId?: string) {
                     connectWebSocket();
                 }, 2000 * connectionRetries.current);
             } else {
-                console.error('Échec de la connexion WebSocket après plusieurs tentatives');
+                wsDisabled.current = true;
                 setIsConnecting(false);
             }
         };
@@ -114,9 +108,7 @@ export function useSeatManager(tripId?: string) {
         connectWebSocket();
 
         return () => {
-            if (stompClient.current) {
-                stompClient.current.deactivate();
-            }
+            if (stompClient.current) stompClient.current.deactivate();
         };
     }, [tripId, syncWithServer, requestInitialState]);
 
@@ -135,22 +127,17 @@ export function useSeatManager(tripId?: string) {
     }, [tripId]);
 
     useEffect(() => {
-        return () => {
-            releaseAllSeats();
-        };
+        return () => { releaseAllSeats(); };
     }, [releaseAllSeats]);
 
     function handleSeatClick(seatNumber: number): void {
-        if (permanentOccupiedSeats.includes(seatNumber) || temporaryReservedSeats.includes(seatNumber)) {
-            return;
-        }
+        if (permanentOccupiedSeats.includes(seatNumber) || temporaryReservedSeats.includes(seatNumber)) return;
 
         const isCurrentlySelected = selectedSeats.includes(seatNumber);
 
         if (isCurrentlySelected) {
             setSelectedSeats(prev => prev.filter(seat => seat !== seatNumber));
             mySelectedSeats.current = mySelectedSeats.current.filter(seat => seat !== seatNumber);
-
             if (stompClient.current && stompClient.current.connected && tripId) {
                 stompClient.current.publish({
                     destination: `/app/voyage/${tripId}/reserver`,
@@ -160,7 +147,6 @@ export function useSeatManager(tripId?: string) {
         } else {
             setSelectedSeats(prev => [...prev, seatNumber]);
             mySelectedSeats.current = [...mySelectedSeats.current, seatNumber];
-
             if (stompClient.current && stompClient.current.connected && tripId) {
                 stompClient.current.publish({
                     destination: `/app/voyage/${tripId}/reserver`,
@@ -172,19 +158,9 @@ export function useSeatManager(tripId?: string) {
 
     function getSeatClass(seatNumber: number): string {
         const baseClass = "lg:w-12 lg:h-12 w-10 h-10 border-2 rounded-lg transition-all duration-200 ";
-
-        if (permanentOccupiedSeats.includes(seatNumber)) {
-            return baseClass + "border-red-600 bg-red-400 cursor-not-allowed opacity-90";
-        }
-
-        if (selectedSeats.includes(seatNumber)) {
-            return baseClass + "border-green-500 bg-green-300 cursor-pointer hover:bg-green-400";
-        }
-
-        if (temporaryReservedSeats.includes(seatNumber)) {
-            return baseClass + "border-orange-500 bg-orange-300 cursor-not-allowed";
-        }
-
+        if (permanentOccupiedSeats.includes(seatNumber)) return baseClass + "border-red-600 bg-red-400 cursor-not-allowed opacity-90";
+        if (selectedSeats.includes(seatNumber)) return baseClass + "border-green-500 bg-green-300 cursor-pointer hover:bg-green-400";
+        if (temporaryReservedSeats.includes(seatNumber)) return baseClass + "border-orange-500 bg-orange-300 cursor-not-allowed";
         return baseClass + "border-gray-400 bg-gray-200 cursor-pointer hover:bg-gray-300";
     }
 

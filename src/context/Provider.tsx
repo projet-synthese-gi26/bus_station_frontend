@@ -70,7 +70,7 @@ function useBusStationProvider() {
             const result = await loginBusinessActor(data);
             if (result) {
                 setUserData(result.user as Customer);
-                saveAuthParams(result.accessToken);
+                saveAuthParams(result.accessToken, result.refreshToken);
                 if (result.user.role.includes("AGENCE_VOYAGE")) setIsAgencyConnected(true);
                 else if (result.user.role.includes("ORGANISATION")) {
                     setIsAgencyConnected(true);

@@ -17,11 +17,9 @@ const DAY_MAP_EN_TO_FR: Record<string, JourSemaine> = {
   THURSDAY: "JEUDI", FRIDAY: "VENDREDI", SATURDAY: "SAMEDI", SUNDAY: "DIMANCHE",
 };
 
-// CORRECTION ICI : Accepte les chaînes (ex: "08:30:00"), les tableaux (ex: [8, 30]) ou les objets
 function localTimeToString(t: any): string | null {
   if (!t) return null;
 
-  // Si le backend envoie une chaîne "08:30:00"
   if (typeof t === "string") {
     const parts = t.split(":");
     if (parts.length >= 2) {
@@ -30,22 +28,20 @@ function localTimeToString(t: any): string | null {
     return t;
   }
 
-  // Si le backend envoie un tableau[8, 30]
   if (Array.isArray(t) && t.length >= 2) {
     return `${String(t[0]).padStart(2, "0")}:${String(t[1]).padStart(2, "0")}`;
   }
 
-  // Si c'est un objet avec hour et minute
   if (typeof t === "object" && t.hour !== undefined && t.minute !== undefined) {
     return `${String(t.hour).padStart(2, "0")}:${String(t.minute).padStart(2, "0")}`;
   }
 
-  return "00:00"; // Sécurité par défaut
+  return "00:00";
 }
 
 function toLocalTime(timeStr: string | null | undefined): string | null {
   if (!timeStr) return null;
-  const[hour, minute] = timeStr.split(":").map(Number);
+  const [hour, minute] = timeStr.split(":").map(Number);
   return `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}:00`;
 }
 
@@ -56,7 +52,7 @@ function toBackendPayload(data: CreateLigneServiceDTO) {
     statut: data.actif ? "ACTIF" : "BROUILLON",
     id_agence_voyage: data.agenceVoyageId,
     date_debut: new Date().toISOString().split("T")[0],
-    creneaux: (data.joursOperation ??[]).map((jour) => {
+    creneaux: (data.joursOperation ?? []).map((jour) => {
       const creneau: Record<string, unknown> = {
         lieu_depart: data.lieuDepart,
         lieu_arrive: data.lieuArrive,
@@ -64,7 +60,6 @@ function toBackendPayload(data: CreateLigneServiceDTO) {
         heure_arrivee: toLocalTime(data.heureArrivee),
         jour_semaine: DAY_MAP_FR_TO_EN[jour] ?? jour,
       };
-      // N'envoyer les FK optionnelles que si elles ont une valeur
       if (data.classVoyageId) creneau.id_class_voyage = data.classVoyageId;
       if (data.vehiculeId) creneau.id_vehicule = data.vehiculeId;
       return creneau;
@@ -99,14 +94,18 @@ export async function getLignesByAgencyId(agencyId: string): Promise<LigneServic
   if (!agencyId) return [];
   try {
     const res: AxiosResponse<any[]> = await axiosInstance.get(`${URL}/agence/${agencyId}`);
-    return (res.data ??[]).map(fromBackend);
+    return (res.data ?? []).map(fromBackend);
   } catch (error) {
-    console.error("[planner-trip-service] Erreur récupération lignes:", (error as AxiosError).message);
+    const axErr = error as AxiosError;
+    // 401/403 : endpoint protégé, visiteur non authentifié → retour silencieux
+    if (axErr.response?.status === 401 || axErr.response?.status === 403) {
+      return [];
+    }
+    console.error("[planner-trip-service] Erreur récupération lignes:", axErr.message);
     throw error;
   }
 }
 
-// La suite des méthodes...
 export const getPlannerTripsByAgencyId = getLignesByAgencyId;
 
 export async function createPlannerTrip(data: CreateLigneServiceDTO): Promise<void> {
@@ -129,7 +128,6 @@ export async function deletePlannerTrip(ligneId: string): Promise<void> {
   }
 }
 
-// updatePlannerTrip conservé pour le drag-and-drop (à connecter au backend plus tard)
 export async function updatePlannerTrip(_tripId: string, _data: any): Promise<void> {
   throw new Error("updatePlannerTrip: non encore connecté au backend");
 }

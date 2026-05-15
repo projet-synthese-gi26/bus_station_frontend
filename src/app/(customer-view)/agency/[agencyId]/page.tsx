@@ -2,16 +2,14 @@
 /**
  * /agency/[agencyId]/page.tsx — Profil public d'une agence (P-05)
  *
- * RESTAURÉE — ce fichier avait été écrasé par le code de la page liste.
- *
  * Structure :
  *   - Header : cover + logo + nom + statut + localisation
- *   - Onglets : [Voyages] [Moyens de paiement] [À propos]
- *   - Empty states soignés pour chaque onglet
+ *   - Onglets : [Voyages] [Planning] [Moyens de paiement] [À propos]
  *
  * Sources :
  *   - GET /agence/{id}/public            → profil agence
  *   - GET /voyage/agence/{id}/public     → voyages publiés (paginé)
+ *   - GET /ligne-service/agence/{id}     → planning hebdomadaire (public, lecture seule)
  */
 
 import React, { useEffect, useState } from "react";
@@ -32,13 +30,15 @@ import {
   Mail,
   Phone,
   Sparkles,
+  CalendarDays,
 } from "lucide-react";
 import apiClient from "@/lib/api/api-client";
 import { getAgencePublic } from "@/lib/services/agency-service";
 import { isMoyenPaiementObject } from "@/lib/types/agence.types";
 import type { AgenceVoyageFull, MoyenPaiement } from "@/lib/types/agence.types";
+import WeeklySchedule from "@/components/agencies-page-components/WeeklySchedule";
 
-type Tab = "voyages" | "paiement" | "apropos";
+type Tab = "voyages" | "planning" | "paiement" | "apropos";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type VoyagePreview = any; // VoyagePreviewDTO du backend
@@ -124,12 +124,10 @@ function VoyageCard({ voyage }: { voyage: VoyagePreview }) {
 }
 
 function PaymentMethod({ moyen }: { moyen: string | MoyenPaiement }) {
-  // Normalise en string pour l'affichage simple
   const label = isMoyenPaiementObject(moyen)
     ? moyen.nomOperateur || moyen.type
     : moyen;
 
-  // Choisit une couleur selon le type de paiement
   const colors: Record<string, string> = {
     ORANGE: "from-orange-500 to-orange-600",
     MTN: "from-yellow-500 to-yellow-600",
@@ -186,7 +184,6 @@ export default function AgencyDetailPage() {
         }
         setAgency(agencyData);
 
-        // Charger les voyages publics de l'agence (peut échouer sans bloquer)
         try {
           const voyagesRes = await apiClient.get(
             `/voyage/agence/${agencyId}/public`,
@@ -206,7 +203,6 @@ export default function AgencyDetailPage() {
     load();
   }, [agencyId]);
 
-  // ─── État de chargement ─────────────────────────────────────────────────
   if (isLoading) {
     return (
       <div className="min-h-full -mx-4 -mt-4">
@@ -226,7 +222,6 @@ export default function AgencyDetailPage() {
     );
   }
 
-  // ─── État d'erreur ──────────────────────────────────────────────────────
   if (error || !agency) {
     return (
       <div className="min-h-[60vh] flex flex-col items-center justify-center gap-4">
@@ -257,7 +252,6 @@ export default function AgencyDetailPage() {
           HEADER
       ═══════════════════════════════════════════════════════════════════ */}
       <section className="relative overflow-hidden bg-linear-to-br from-blue-700 via-blue-800 to-indigo-900 px-4 pt-8 pb-24">
-        {/* Pattern décoratif */}
         <div
           className="absolute inset-0 opacity-10"
           style={{
@@ -268,7 +262,6 @@ export default function AgencyDetailPage() {
         <div className="absolute -top-20 -right-20 w-80 h-80 bg-blue-400/20 rounded-full blur-3xl" />
 
         <div className="relative max-w-5xl mx-auto">
-          {/* Breadcrumb */}
           <Link
             href="/agency"
             className="inline-flex items-center gap-1 text-blue-200 hover:text-white text-sm font-medium mb-4 transition-colors"
@@ -277,7 +270,6 @@ export default function AgencyDetailPage() {
           </Link>
 
           <div className="flex flex-col sm:flex-row items-start gap-5">
-            {/* Logo */}
             <div className="w-20 h-20 rounded-2xl bg-white shadow-xl ring-4 ring-white/20 flex items-center justify-center overflow-hidden shrink-0">
               {agency.logoUrl ? (
                 <Image
@@ -295,7 +287,6 @@ export default function AgencyDetailPage() {
               )}
             </div>
 
-            {/* Identité */}
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 flex-wrap mb-1">
                 <h1 className="text-2xl sm:text-3xl font-bold text-white leading-tight">
@@ -336,7 +327,7 @@ export default function AgencyDetailPage() {
       </section>
 
       {/* ═══════════════════════════════════════════════════════════════════
-          BARRE D'ONGLETS (chevauche le header)
+          BARRE D'ONGLETS
       ═══════════════════════════════════════════════════════════════════ */}
       <div className="relative -mt-12 px-4 z-10">
         <div className="max-w-5xl mx-auto bg-white rounded-2xl shadow-xl border border-gray-100 p-1.5 flex gap-1 overflow-x-auto">
@@ -347,6 +338,11 @@ export default function AgencyDetailPage() {
                 label: "Voyages",
                 icon: Bus,
                 count: voyages.length,
+              },
+              {
+                id: "planning",
+                label: "Planning",
+                icon: CalendarDays,
               },
               {
                 id: "paiement",
@@ -419,6 +415,19 @@ export default function AgencyDetailPage() {
           </>
         )}
 
+        {/* ── Onglet Planning ─────────────────────────────────────────────── */}
+        {activeTab === "planning" && (
+          <div className="space-y-4">
+            <div className="flex items-center gap-2 text-sm text-gray-500">
+              <CalendarDays className="w-4 h-4 text-blue-400" />
+              <span>
+                Planning hebdomadaire de l&apos;agence — lecture seule
+              </span>
+            </div>
+            <WeeklySchedule agencyId={agencyId} isEditable={false} />
+          </div>
+        )}
+
         {/* ── Onglet Moyens de paiement ───────────────────────────────────── */}
         {activeTab === "paiement" && (
           <>
@@ -456,7 +465,6 @@ export default function AgencyDetailPage() {
         {/* ── Onglet À propos ─────────────────────────────────────────────── */}
         {activeTab === "apropos" && (
           <div className="space-y-5">
-            {/* Description */}
             {agency.description ? (
               <div className="bg-white rounded-2xl border border-gray-100 p-6">
                 <div className="flex items-center gap-2 mb-3">
@@ -475,7 +483,6 @@ export default function AgencyDetailPage() {
               </div>
             )}
 
-            {/* Spécialités */}
             {agency.specialties && agency.specialties.length > 0 && (
               <div className="bg-white rounded-2xl border border-gray-100 p-6">
                 <h2 className="font-semibold text-gray-900 mb-3">
@@ -494,7 +501,6 @@ export default function AgencyDetailPage() {
               </div>
             )}
 
-            {/* Contact */}
             {(agency.contact || agency.socialNetwork) && (
               <div className="bg-white rounded-2xl border border-gray-100 p-6">
                 <h2 className="font-semibold text-gray-900 mb-3">Contact</h2>
@@ -543,4 +549,3 @@ export default function AgencyDetailPage() {
     </div>
   );
 }
-// END OF FILE: src/app/(customer-view)/agency/[agencyId]/page.tsx

@@ -27,7 +27,6 @@ export async function retrieveTripDetail(tripId: string): Promise<Trip | null> {
   try {
     const apiResponse: AxiosResponse<Trip> = await axiosInstance.get(`${url}/${tripId}`);
     if (apiResponse.status === 200) {
-      console.log(apiResponse);
       return apiResponse.data;
     } else {
       console.warn("Unattended http code", apiResponse.status);
