@@ -8,7 +8,6 @@ import {linkList} from "@/components/layouts/customer-sibebar/clientNavLink";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
 
-
     const { isSidebarOpen, setIsSidebarOpen } = useCustomerSidebar();
 
     return (
@@ -19,7 +18,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                     isOpen={isSidebarOpen}
                     onToggle={setIsSidebarOpen}
                 />
-                <div className="flex-1 flex flex-col">
+                <div className="flex-1 min-w-0 flex flex-col">
                     <NavBar onMenuClick={() => setIsSidebarOpen(!isSidebarOpen)} />
                     <main className="flex-1 overflow-x-hidden overflow-y-auto bg-white p-4">
                         {children}

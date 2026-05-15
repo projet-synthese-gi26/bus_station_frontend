@@ -10,9 +10,6 @@ import {useNavigation} from "@/lib/hooks/useNavigation";
 import NoTripFound from "@/components/market-place-components/market-place/NoTripFound";
 import TripError from "@/components/market-place-components/market-place/TripError";
 
-
-
-
 export interface SearchFilterType {
     departure: string;
     arrival: string;
@@ -20,41 +17,34 @@ export interface SearchFilterType {
 }
 
 export default function MarketPlace(): JSX.Element {
-
-
     const marketPlace = useMarketPlace();
     const navigate = useNavigation();
 
-
-
     if (marketPlace.isLoading) return <Loader/>
+
     return (
-        <div className="min-h-screen p-2">
-            {/* Header avec recherche */}
+        <div className="min-h-screen p-2 overflow-x-hidden">
             <MarketPlaceHeader
                 searchFilters={marketPlace.searchFilters}
                 setSearchFilters={marketPlace.setSearchFilters}
                 handleSearch={marketPlace.handleSearch}
             />
 
-            {/* Filtres */}
             <Filters
                 activeFilter={marketPlace.activeFilter}
                 setActiveFilter={marketPlace.setActiveFilter}
             />
 
-            {/* Grille des voyages */}
             <TripGrid
                 filteredTrips={marketPlace.filteredTrips || []}
                 getClassColor={marketPlace.getClassColor}
                 getAmenityIcon={marketPlace.getAmenityIcon}
-                navigate = {navigate.onGoToTripDetail}
+                navigate={navigate.onGoToTripDetail}
             />
 
-            {/* Pagination */}
             {marketPlace.filteredTrips && marketPlace.filteredTrips.length > 0 && (
-                <div className="flex justify-center mt-12">
-                    <div className="flex items-center gap-2">
+                <div className="flex justify-center mt-12 mb-6">
+                    <div className="flex items-center gap-2 flex-wrap justify-center">
                         <button className="w-10 h-10 rounded-lg bg-white border-2 border-gray-200 text-gray-600 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-600 transition-colors flex items-center justify-center">
                             ←
                         </button>
@@ -75,12 +65,10 @@ export default function MarketPlace(): JSX.Element {
                 </div>
             )}
 
-            {/* Any trip found */}
             {marketPlace.filteredTrips && marketPlace.filteredTrips.length === 0 && (
                 <NoTripFound/>
             )}
 
-            {/* Loading error */}
             {marketPlace.filteredTrips === null && (
                 <TripError error={marketPlace.error}/>
             )}
