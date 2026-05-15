@@ -25,7 +25,7 @@ interface GenerateSemaineModalProps {
   onClose: () => void;
   lignes: LigneService[];
   agency: AgenceVoyageFull | null;
-  onGenerated: () => void; // refetch brouillons / voyages
+  onGenerated: () => void;
 }
 
 export default function GenerateSemaineModal({
@@ -36,10 +36,8 @@ export default function GenerateSemaineModal({
   onGenerated,
 }: GenerateSemaineModalProps) {
   const [step, setStep] = useState<1 | 2>(1);
-  const[weekOffset, setWeekOffset] = useState(1); // 1 = semaine prochaine par défaut
-  const[preview, setPreview] = useState<MatchingPreviewItem[]>([]);
-  
-  // États de chargement séparés pour la clarté de l'UI
+  const [weekOffset, setWeekOffset] = useState(1);
+  const [preview, setPreview] = useState<MatchingPreviewItem[]>([]);
   const [isPreviewLoading, setIsPreviewLoading] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
 
@@ -57,30 +55,28 @@ export default function GenerateSemaineModal({
     0,
   );
 
-  // ─── ACTION 1 : Appel de la vraie prévisualisation (Backend) ─────────────
   const handlePreview = async () => {
     if (!agency) return;
-    
+
     setIsPreviewLoading(true);
     const toastId = toast.loading("Calcul du matching par le serveur...");
-    
+
     try {
+      console.log("[preview] agency.agencyId =", agency?.agencyId)
       const payload = {
-        agenceVoyageId: agency.agencyId,
+        agenceId: agency.agencyId,
         lignesIds: lignesActives.map((l) => l.id),
         semaineDebut: format(semaineDebut, "yyyy-MM-dd"),
       };
 
       const res = await apiClient.post(API_ROUTES.generation.preview, payload);
-      
-      // Extraction des données en prévoyant plusieurs formats de réponse backend
+
       const data = res.data;
-      let items: MatchingPreviewItem[] =[];
+      let items: MatchingPreviewItem[] = [];
       if (Array.isArray(data)) items = data;
       else if (data?.items && Array.isArray(data.items)) items = data.items;
       else if (data?.content && Array.isArray(data.content)) items = data.content;
 
-      // Tri chronologique des résultats
       items.sort(
         (a, b) => new Date(a.dateDepartPrev).getTime() - new Date(b.dateDepartPrev).getTime()
       );
@@ -99,27 +95,26 @@ export default function GenerateSemaineModal({
   const totalPublie = preview.filter((p) => p.statutPrevu === "PUBLIE").length;
   const totalIncomplet = preview.filter((p) => p.statutPrevu === "INCOMPLET").length;
 
-  // ─── ACTION 2 : Appel de la vraie génération (Backend) ────────────────────
   const handleGenerate = async () => {
     if (!agency) return;
-    
+
     setIsGenerating(true);
     const toastId = toast.loading("Génération en cours...");
-    
+
     try {
       await apiClient.post(API_ROUTES.generation.semaine, {
-        agenceVoyageId: agency.agencyId,
+        agenceId: agency.agencyId,
         lignesIds: lignesActives.map((l) => l.id),
         semaineDebut: format(semaineDebut, "yyyy-MM-dd"),
       });
-      
+
       toast.success(
         "Semaine générée avec succès ! Les voyages et brouillons ont été créés.",
         { id: toastId, duration: 4000 },
       );
-      
-      onGenerated(); // Met à jour l'interface en arrière-plan
-      onClose();     // Ferme la modale
+
+      onGenerated();
+      onClose();
     } catch (error) {
       console.error("[GenerateSemaineModal] Erreur de génération :", error);
       toast.error("Erreur lors de la génération de la semaine.", { id: toastId });
@@ -150,7 +145,6 @@ export default function GenerateSemaineModal({
 
         {/* Corps */}
         <div className="flex-1 overflow-y-auto p-5 space-y-5">
-          {/* Étape 1 — sélection semaine */}
           {step === 1 && (
             <>
               <div className="flex items-center justify-between bg-gray-50 rounded-xl p-4">
@@ -189,7 +183,6 @@ export default function GenerateSemaineModal({
             </>
           )}
 
-          {/* Étape 2 — tableau de prévisualisation */}
           {step === 2 && (
             <>
               <div className="flex items-center gap-4 text-sm">

@@ -101,7 +101,7 @@ export default function WeeklySchedule({ agencyId, isEditable = false }: WeeklyS
           dayOfWeek: JOUR_TO_NUM[jour] ?? 1,
           startTime: extractCleanTime(rawStart), // "08:30:00" -> "08:30"
           endTime: extractCleanTime(rawEnd),     // "13:30:00" -> "13:30"
-          category: ligne.nomClasse ?? ligne.classVoyageId ?? "Standard",
+          category: ligne.nomClasse ?? "Standard",
           _ligneServiceId: ligne.id,
         });
       }
